@@ -1,4 +1,5 @@
 # Concert picker bot
+ [![codecov](https://codecov.io/gh/rustam-python/Concert-picker-bot/branch/master/graph/badge.svg)](https://codecov.io/gh/rustam-python/Concert-picker-bot)    [![CircleCI](https://circleci.com/gh/rustam-python/Concert-picker-bot.svg?style=svg)](https://circleci.com/gh/rustam-python/Concert-picker-bot)
 
 A Telegram bot for concert searching based on requests to API of kudago.сom (as concert data source) and the Last.FM (as statistics data source).
 
@@ -25,7 +26,7 @@ The bot uses the following modules:
 
 ### Settings
 The application uses configuration files to interact with user configurations. To use the application your way, you need to create in the following configuration files:
-1. variables.env — is settings file for postgres container.
+1. `variables.env` — is settings file for postgres container.
 
 ```
 POSTGRES_DB_HOST_NAME=db_host
@@ -34,7 +35,7 @@ POSTGRES_DB=db_name
 POSTGRES_USER=user
 POSTGRES_PASSWORD=password
 ```
-2. api-web-server-config.ini — is settings file of web server. Add your DB settings, LastFM API key and Telegram token.
+2. `api-web-server-config.ini` — is settings file of web server. Add your DB settings, LastFM API key and Telegram token.
 ```
 [Database]
 host = db_host
