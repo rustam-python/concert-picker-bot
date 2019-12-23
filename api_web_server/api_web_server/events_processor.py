@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 from typing import List, Dict, Union
 
+import peewee
 import requests
 
 from Models import Events
@@ -24,11 +25,11 @@ class EventsProcessor:
     def process(self) -> Union[None, List[str]]:
         try:
             if Server.last_fm_api_key is None:
-                raise RuntimeError('"lastFM_api_key" is non found! Please check if "api-web-server-config.ini" is in'
-                                   ' code directory and correctly filled.')
+                raise ValueError('"lastFM_api_key" is non found! Please check if "api-web-server-config.ini" is in'
+                                 ' code directory and correctly filled.')
             if Server.user is None:
-                raise RuntimeError('"LastFM user" is non found! Please check if "api-web-server-config.ini" is in'
-                                   ' code directory and correctly filled.')
+                raise ValueError('"LastFM user" is non found! Please check if "api-web-server-config.ini" is in'
+                                 ' code directory and correctly filled.')
             artists_list = self.get_artists_list()
             events_list = self.create_events_list(request_string=self.r_string, artists_list=artists_list)
             places = PlacesProcessor(events_list=events_list)
