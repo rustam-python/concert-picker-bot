@@ -21,12 +21,12 @@ class PlacesProcessor:
         self.compared_places_attribs_list: List[Tuple[int, str, str]] = []
 
     def process(self):
-        if self.get_places_id_list():
+        if self.get_places_id_set():
             if self.get_places_attribs():
                 if self.db_compare():
                     Places.bunch_insert(self.compared_places_attribs_list)
 
-    def get_places_id_list(self) -> Set[str]:
+    def get_places_id_set(self) -> Set[str]:
         places_list = [place['place']['id'] for place in self.events_list]
         self.places_id_set = set(places_list)
 
