@@ -53,6 +53,10 @@ class EventsProcessor:
         except RuntimeError as err:
             print(f'{datetime.now()} --- There is an error: "{err}"')
             raise RuntimeError(f'{datetime.now()} --- There is an error: "{str(err).strip()}".')
+        except peewee.DataError as err:
+            print(f'{datetime.now()} --- There is an error: "{str(err).strip()}".')
+        except peewee.ProgrammingError as err:
+            print(f'{datetime.now()} --- There is an error: "{str(err).strip()}".')
 
     @classmethod
     def get_artists_list(cls) -> List[str]:
