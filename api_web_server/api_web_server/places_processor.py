@@ -28,8 +28,9 @@ class PlacesProcessor:
 
     def get_places_id_set(self) -> Set[str]:
         places_list = [place['place']['id'] for place in self.events_list]
+        if not self.events_list:
+            raise ValueError('Events list is empty!')
         self.places_id_set = set(places_list)
-
         return self.places_id_set
 
     def get_places_attribs(self) -> List[Tuple[int, str, str]]:
