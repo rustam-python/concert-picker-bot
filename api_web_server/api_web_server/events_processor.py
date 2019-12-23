@@ -32,6 +32,8 @@ class EventsProcessor:
                                  ' code directory and correctly filled.')
             artists_list = self.get_artists_list()
             events_list = self.create_events_list(request_string=self.r_string, artists_list=artists_list)
+            if not events_list:
+                raise ValueError('Events list is empty!')
             places = PlacesProcessor(events_list=events_list)
             places.process()
             if self.events_list:
