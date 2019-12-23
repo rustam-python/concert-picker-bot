@@ -34,16 +34,13 @@ class PlacesProcessor:
 
     def get_places_attribs(self) -> List[Tuple[int, str, str]]:
         for place_id in self.places_id_set:
-            try:
-                result = requests.get(
-                    f'https://kudago.com/public-api/v1.4/places/{place_id}/?lang=&fields=id,title,address&location=msk')
-                results = result.json()
-                """Check if ID is not in cache"""
-                if results['id'] not in self.places_cache:
-                    self.places_attribs_list.append((results['id'], results['title'], results['address']))
-                    self.places_cache.append(results['id'])
-            except Exception as err:
-                print(err)
+            result = requests.get(
+                f'https://kudago.com/public-api/v1.4/places/{place_id}/?lang=&fields=id,title,address&location=msk')
+            results = result.json()
+            """Check if ID is not in cache"""
+            if results['id'] not in self.places_cache:
+                self.places_attribs_list.append((results['id'], results['title'], results['address']))
+                self.places_cache.append(results['id'])
         return self.places_attribs_list
 
     def db_compare(self):
