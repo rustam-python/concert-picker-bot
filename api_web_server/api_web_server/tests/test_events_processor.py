@@ -72,10 +72,13 @@ class EventsProcessorTest(unittest.TestCase):
 
     def test_get_artists_list_response(self):
         self.patched_requests_get.return_value = requests.models.Response
-        with open(os.path.join(os.path.abspath('test_data'), 'last_fm_answer.json')) as f:
+        with open(os.path.join(os.path.abspath('tests'), 'test_data', 'last_fm_answer.json')) as f:
             self.patched_requests_response.json.return_value = json.load(f)
         artists_list = [artist['name'] for artist in self.patched_requests_response.json()['topartists']['artist']]
         self.assertEqual(self.events_processor_instance.get_artists_list(), artists_list)
+
+    def test_db_compare(self):
+        pass
 
 
 if __name__ == "__main__":
