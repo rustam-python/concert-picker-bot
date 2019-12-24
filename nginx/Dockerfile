@@ -1,5 +1,7 @@
 FROM nginx:1.17.2
 
+MAINTAINER Rustam Aliev
+
 ENV TZ=Europe/Moscow
 
 RUN dpkg-reconfigure -f noninteractive tzdata
