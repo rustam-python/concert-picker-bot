@@ -106,5 +106,6 @@ class BotMethods:
             raise requests.exceptions.ConnectionError(f'{datetime.now()} --- There is an error: "{str(err).strip()}".')
 
 
-# if __name__ == '__main__':
-
+if __name__ == '__main__':
+    bot = BotMethods()
+    bot.start_bot()
