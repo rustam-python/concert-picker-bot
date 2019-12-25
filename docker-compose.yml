@@ -38,7 +38,7 @@ services:
     env_file:
       - 'variables.env'
     restart: on-failure
-    command: python3 bot.py
+    command: python3 bot_methods.py
     # command: tail -f /dev/null
     depends_on:
       - "api_web_server"
