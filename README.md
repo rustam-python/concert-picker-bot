@@ -1,5 +1,5 @@
 # Concert picker bot
- [![codecov](https://codecov.io/gh/rustam-python/Concert-picker-bot/branch/master/graph/badge.svg)](https://codecov.io/gh/rustam-python/Concert-picker-bot)    [![CircleCI](https://circleci.com/gh/rustam-python/Concert-picker-bot.svg?style=svg)](https://circleci.com/gh/rustam-python/Concert-picker-bot)
+ [![codecov](https://codecov.io/gh/rustam-python/Concert-picker-bot/branch/master/graph/badge.svg)](https://codecov.io/gh/rustam-python/Concert-picker-bot)    [![Build Status](https://travis-ci.org/rustam-python/Concert-picker-bot.svg?branch=Developing)](https://travis-ci.org/rustam-python/Concert-picker-bot)
 
 A Telegram bot for concert searching based on requests to API of kudago.сom (as concert data source) and the Last.FM (as statistics data source).
 
