@@ -1,5 +1,7 @@
 FROM ubuntu:19.04
 
+MAINTAINER Rustam Aliev
+
 WORKDIR /src/concert_picker
 COPY /api_web_server /src/concert_picker
 COPY /api-web-server-config.ini /src/concert_picker/api-web-server-config.ini

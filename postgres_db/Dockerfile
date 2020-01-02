@@ -1,4 +1,7 @@
 FROM postgres:12.0
+
+MAINTAINER Rustam Aliev
+
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
                               apt-utils \

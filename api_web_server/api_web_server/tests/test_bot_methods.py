@@ -19,7 +19,7 @@ class BotMethodsTest(unittest.TestCase):
                              'slug': 'kontsert-kinozvuk-dekabr-2019', 'p_id': 745,
                              'name': 'Московский международный Дом музыки (ММДМ)',
                              'address': 'наб. Космодамианская, д. 52, стр. 8'}]
-        with open(os.path.join(os.path.abspath('test_data'), 'telegram_answer.txt'), 'r') as f:
+        with open(os.path.join(os.path.abspath('tests'), 'test_data', 'telegram_answer.txt'), 'r') as f:
             row_data = f.read()
             self.telegram_answer = eval(row_data)
 

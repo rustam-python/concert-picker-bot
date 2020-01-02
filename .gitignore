@@ -2,6 +2,9 @@
 *.log
 *.pyc
 .idea/
+.coveragerc
+coverage.xml
+
 # Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python
 
@@ -131,3 +134,7 @@ dmypy.json
 .pyre/
 
 # End of https://www.gitignore.io/api/python
+/api_web_server/api-web-server-config.ini
+/api_web_server/api_web_server/api-web-server-config.ini
+/api_web_server/api_web_server/coverage_html_report/
+/variables.env
