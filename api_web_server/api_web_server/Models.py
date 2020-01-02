@@ -71,7 +71,7 @@ class Events(BaseModel):
     date = TimestampField()
     title = TextField()
     place = ForeignKeyField(Places)
-    slug = TextField(unique=True)
+    slug = TextField()
     price = TextField()
     hash_string = TextField()
     message_sent = BooleanField(default=False)
