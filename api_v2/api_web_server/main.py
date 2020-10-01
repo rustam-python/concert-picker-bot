@@ -84,6 +84,18 @@ class EventsCreator:
             return [response]
         return self._get_kudago_data(response.get('next')) + [response]
 
+    def _events_factory(self, response: List[dict]) -> List[Event]:
+        logger.info('Processing events data...')
+        events: List[Event] = []
+        for _dict in response:
+            for event in _dict['results']:
+                try:
+                    events.append(Event(event_id=event.get('id'), date=event.get('dates'), title=event.get('title'),
+                                        place=event.get('place'), slug=event.get('slug'), price=event.get('price')))
+                except TypeError:
+                    logger.error(f'The data of event is corrupted: {event}')
+        return events
+
 
 class SQLProcessor:
     """Dummy class for work with DB."""
