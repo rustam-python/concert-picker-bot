@@ -56,6 +56,10 @@ class MessageSender:
 
 
 class EventsRetriever:
+    def __init__(self, username: str, token: str):
+        self._events_getter = EventsCreator(username, token)
+        self._slq_processor = SQLProcessor()
+
     def get_events(self):
         pass
 
