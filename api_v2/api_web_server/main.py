@@ -33,3 +33,17 @@ class CustomFormatter(Formatter):
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = Formatter(log_fmt)
         return formatter.format(record)
+
+
+class Processor:
+    pass
+
+
+class MessageSender:
+    def send(self):
+        pass
+
+
+class EventsRetriever:
+    def get_events(self):
+        pass
