@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from logging import Formatter, CRITICAL, ERROR, WARNING, INFO, DEBUG, StreamHandler, getLogger
+from time import time
 from typing import List, Dict
 
 import requests
@@ -72,6 +73,13 @@ class Event:
 
 
 class EventsCreator:
+    def __init__(self, user: str, token: str):
+        self.r_str = f'https://kudago.com/public-api/v1.4/events/?lang=&page_size=100&' \
+                     f'fields=id,dates,title,place,slug,price&expand=&order_by=&text_format=&ids=&location=msk&' \
+                     f'actual_since={time()}&actual_until=&is_free=&categories=concert'
+        self.username = user
+        self.token = token
+
     def _get_kudago_data(self, r_string: str) -> List[dict]:
         """
         It is a recursive function that takes the URL of the request to the KudaGo API and return data of events.
