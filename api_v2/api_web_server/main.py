@@ -64,3 +64,24 @@ class Event:
     def __str__(self):
         return f'event_id={self.event_id}, place={self.place}, price={self.price}, slug={self.slug}, ' \
                f'title={self.title}, date={self.date}'
+
+
+class EventsCreator:
+    """Dummy class for work with API."""
+    pass
+
+
+class SQLProcessor:
+    """Dummy class for work with DB."""
+
+    def __init__(self):
+        pass
+
+    def __call__(self, events: List[Event]):
+        pass
+
+    def _get_events(self):
+        pass
+
+    def _write_to_sql(self):
+        pass
