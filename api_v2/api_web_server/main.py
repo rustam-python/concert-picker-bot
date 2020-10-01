@@ -47,6 +47,7 @@ class Processor:
 
 class MessageSender:
     """Dummy class for work with Telegram API."""
+
     def send(self):
         pass
 
@@ -95,6 +96,22 @@ class EventsCreator:
                 except TypeError:
                     logger.error(f'The data of event is corrupted: {event}')
         return events
+
+    def _get_scrobbled_artists(self, username: str, token: str) -> List[str]:
+        """
+        This method requests API of LastFM for a list of 200 popular artists of the user.
+        :param username: LastFM user
+        :token: LastFM API token
+        :return: list of artists
+        """
+        logger.info('Request LastFM API for scrobbled artists list...')
+        response = requests.get(f'http://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user={username}&'
+                                f'period=overall&limit=300&api_key={token}&format=json')
+        _json = response.json()
+        data: List[str] = []
+        for artist in _json['topartists']['artist']:
+            data.append(artist['name'])
+        return data
 
 
 class SQLProcessor:
