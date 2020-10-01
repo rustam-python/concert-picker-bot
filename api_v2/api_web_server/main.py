@@ -113,6 +113,21 @@ class EventsCreator:
             data.append(artist['name'])
         return data
 
+    def _events_filter(self, event_list: List[Event], artist_list: List[str]) -> List[Event]:
+        """
+        The function filters passed Events list by the passed list of artists.
+        :param event_list: events data from KudaGo API.
+        :param artist_list: scrobbled artists data from LastFM API.
+        :return: filtered by artist events data
+        """
+        logger.info('Filter events...')
+        data: List[Event] = []
+        for event in event_list:
+            for artist in artist_list:
+                if artist in event.title:
+                    data.append(event)
+        return data
+
 
 class SQLProcessor:
     """Dummy class for work with DB."""
