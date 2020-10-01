@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime
-from logging import Formatter, CRITICAL, ERROR, WARNING, INFO, DEBUG
+from logging import Formatter, CRITICAL, ERROR, WARNING, INFO, DEBUG, StreamHandler, getLogger
 from typing import List, Dict
+
+import requests
 
 
 class CustomFormatter(Formatter):
@@ -68,7 +70,19 @@ class Event:
 
 class EventsCreator:
     """Dummy class for work with API."""
-    pass
+
+    def _get_kudago_data(self, r_string: str) -> List[dict]:
+        """
+        It is a recursive function that takes the URL of the request to the KudaGo API and return data of events.
+        :param r_string: request URL
+        :return: list of events data
+        """
+
+        r = requests.get(r_string)
+        response = r.json()
+        if not response.get('next'):
+            return [response]
+        return self._get_kudago_data(response.get('next')) + [response]
 
 
 class SQLProcessor:
@@ -85,3 +99,11 @@ class SQLProcessor:
 
     def _write_to_sql(self):
         pass
+
+
+if __name__ == '__main__':
+    logger = getLogger('Events parser')
+    logger.setLevel(INFO)
+    console_handler = StreamHandler()
+    console_handler.setFormatter(CustomFormatter())
+    logger.addHandler(console_handler)
