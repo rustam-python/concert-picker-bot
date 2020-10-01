@@ -41,10 +41,12 @@ class CustomFormatter(Formatter):
 
 
 class Processor:
+    """Dummy manager class."""
     pass
 
 
 class MessageSender:
+    """Dummy class for work with Telegram API."""
     def send(self):
         pass
 
@@ -69,8 +71,6 @@ class Event:
 
 
 class EventsCreator:
-    """Dummy class for work with API."""
-
     def _get_kudago_data(self, r_string: str) -> List[dict]:
         """
         It is a recursive function that takes the URL of the request to the KudaGo API and return data of events.
