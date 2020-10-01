@@ -1,4 +1,7 @@
-from logging import Formatter, CRITICAL, ERROR, WARNING, INFO, DEBUG, StreamHandler, getLogger
+from dataclasses import dataclass
+from datetime import datetime
+from logging import Formatter, CRITICAL, ERROR, WARNING, INFO, DEBUG
+from typing import List, Dict
 
 
 class CustomFormatter(Formatter):
@@ -47,3 +50,17 @@ class MessageSender:
 class EventsRetriever:
     def get_events(self):
         pass
+
+
+@dataclass
+class Event:
+    event_id: int
+    place: List[Dict[str, int]]
+    price: str
+    slug: str
+    title: str
+    date: List[Dict[str, datetime]]
+
+    def __str__(self):
+        return f'event_id={self.event_id}, place={self.place}, price={self.price}, slug={self.slug}, ' \
+               f'title={self.title}, date={self.date}'
