@@ -5,6 +5,8 @@ from time import time
 from typing import List, Dict
 
 import requests
+from .model import initialize_data_base, Events
+from .settings import Server
 
 
 class CustomFormatter(Formatter):
@@ -151,7 +153,7 @@ class SQLProcessor:
         pass
 
     def _get_events(self):
-        pass
+        return Events.select()
 
     def _write_to_sql(self):
         pass
