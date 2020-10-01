@@ -80,6 +80,10 @@ class EventsCreator:
         self.username = user
         self.token = token
 
+    def __call__(self) -> List[Event]:
+        return self._events_filter(event_list=self._events_factory(self._get_kudago_data(self.r_str)),
+                                   artist_list=self._get_scrobbled_artists(self.username, self.token))
+
     def _get_kudago_data(self, r_string: str) -> List[dict]:
         """
         It is a recursive function that takes the URL of the request to the KudaGo API and return data of events.
