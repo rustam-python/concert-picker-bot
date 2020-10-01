@@ -61,7 +61,8 @@ class EventsRetriever:
         self._slq_processor = SQLProcessor()
 
     def get_events(self):
-        pass
+        events = self._events_getter()
+        self._slq_processor(events)
 
 
 @dataclass
