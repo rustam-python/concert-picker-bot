@@ -2,7 +2,7 @@ import os
 
 from configorm import IniConnector, Section, StringField, IntegerField
 
-connector = IniConnector(connection_string=os.path.join(os.getcwd(), '../api-web-server-config.ini'))
+connector = IniConnector(connection_string=os.path.join(os.getcwd(), 'api-web-server-config.ini'))
 
 
 class BaseSection(Section):

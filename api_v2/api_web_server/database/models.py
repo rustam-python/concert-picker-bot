@@ -4,7 +4,7 @@ from logging import getLogger
 from peewee import PostgresqlDatabase, Model, PrimaryKeyField, TextField, TimestampField, ForeignKeyField, \
     BooleanField, SqliteDatabase, Proxy, OperationalError, InterfaceError, CompositeKey, IntegerField
 
-from .settings import DataBase
+from api_v2.api_web_server import settings
 
 logger = getLogger('Events parser')
 
@@ -20,8 +20,11 @@ def initialize_data_base(force_local: bool = False) -> Proxy:
         if force_local is False:
             if db.obj is None:
                 try:
-                    server_db.init(database=DataBase.base, user=DataBase.username, password=DataBase.password,
-                                   host=DataBase.host, port=DataBase.port)
+                    server_db.init(database=settings.DataBase.base,
+                                   user=settings.DataBase.username,
+                                   password=settings.DataBase.password,
+                                   host=settings.DataBase.host,
+                                   port=settings.DataBase.port)
                     server_db.connect(reuse_if_open=True)
                     db.initialize(server_db)
                     BaseModel.check_db_integrity()
@@ -64,18 +67,16 @@ class BaseModel(Model):
 
 
 class Places(BaseModel):
-    place_id = PrimaryKeyField(index=True, unique=True)
-    name = TextField()
-    address = TextField()
+    place_id = IntegerField(unique=True)
+    name = TextField(null=True)
+    address = TextField(null=True)
 
     @classmethod
-    def add(cls, place_id: int, name: str, address: str) -> 'Events':
+    def add(cls, place_id: int, name: str = None, address: str = None) -> 'Places':
         try:
-            return cls.get(
-                (cls.place_id == place_id), (cls.name == name), (cls.address == address))
+            return cls.get((cls.place_id == place_id), (cls.name == name), (cls.address == address))
         except cls.DoesNotExist:
-            new = cls.create(place_id=place_id, name=name, address=address)
-            return new
+            return cls.create(place_id=place_id, name=name, address=address)
 
     @classmethod
     def bunch_insert(cls, data_set):
@@ -89,26 +90,44 @@ class Places(BaseModel):
             cls.insert_many(rows, fields=[cls.place_id, cls.name, cls.address]).execute()
 
 
-class Events(BaseModel):
-    event_id = IntegerField()
-    date = TimestampField()
-    title = TextField()
-    place = ForeignKeyField(Places)
-    slug = TextField()
-    price = TextField()
-    message_sent = BooleanField(default=False)
-
-    class Meta:
-        primary_key = CompositeKey('event_id', 'date', 'title', 'place', 'slug', 'price', 'message_sent')
+class Dates(BaseModel):
+    id = PrimaryKeyField(index=True, unique=True)
+    start = TimestampField(null=False)
+    end = TimestampField(null=False)
 
     @classmethod
-    def add(cls, date: datetime, title: str, place: str, slug: str, hash_string: str, price: str,
-            message_sent: bool) -> 'Events':
+    def add(cls, start: datetime, end: datetime) -> 'Dates':
+        return cls.get_or_create(start=start, end=end)[0]
+
+
+class Events(BaseModel):
+    event_id = IntegerField(index=True, unique=True)
+    title = TextField(null=False)
+    place = ForeignKeyField(Places, null=True)
+    slug = TextField(null=False)
+    price = TextField(null=False)
+    message_sent = BooleanField(default=False)
+
+    @classmethod
+    def add(cls, event_id: int, title: str, place: int, slug: str, price: str) -> 'Events':
         try:
-            return cls.get(
-                (cls.date == date), (cls.title == title), (cls.place == place), (cls.slug == slug),
-                (cls.price == price), (cls.message_sent == message_sent))
+            return cls.get(event_id=event_id)
         except cls.DoesNotExist:
-            new = cls.create(date=date, title=title, place=place, slug=slug, price=price, hash_string=hash_string,
-                             message_sent=message_sent)
+            new = cls.create(
+                event_id=event_id,
+                title=title,
+                place=Places.add(place),
+                slug=slug,
+                price=price
+            )
             return new
+
+
+class EventsInDates(BaseModel):
+    id = PrimaryKeyField(index=True, unique=True)
+    event_id = ForeignKeyField(Events)
+    dates_id = ForeignKeyField(Dates)
+
+    @classmethod
+    def add(cls, event_id: int, dates_id: int) -> 'EventsInDates':
+        return cls.get_or_create(event_id=event_id, dates_id=dates_id)[0]
