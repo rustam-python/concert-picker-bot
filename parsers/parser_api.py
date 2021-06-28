@@ -19,8 +19,8 @@ class ParserApi:
             self._exec_scan()
             result = True
             self.logger.success('APIs check is completed')
-        except Exception:
-            self.logger.critical('Error occurred during APIs parsing', stack_info=True)
+        except Exception as e:
+            self.logger.critical(f'Error occurred during APIs parsing: {e}', stack_info=True)
         return result
 
     def _exec_scan(self):
