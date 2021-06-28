@@ -138,3 +138,5 @@ dmypy.json
 /api_web_server/api_web_server/api-web-server-config.ini
 /api_web_server/api_web_server/coverage_html_report/
 /variables.env
+settings/cpb-config.ini
+database/cpb-local-db
