@@ -137,9 +137,13 @@ class GetterEvents(_ProtoGetter):
         :return: list of artists
         """
         self.logger.info('Request LastFM API for scrobbled artists list')
-        response = requests.get(settings.APIs.lastfm_url.format(settings.APIs.lastfm_username,
-                                                                settings.APIs.lastfm_artists_limit,
-                                                                settings.APIs.lastfm_token))
+        response = requests.get(
+            settings.APIs.lastfm_url.format(
+                settings.APIs.lastfm_username,
+                settings.APIs.lastfm_artists_limit,
+                settings.APIs.lastfm_token
+            )
+        )
         if not response.ok:
             error = response.json().get('message')
             self.logger.critical(f'Failed to get LastFM data: {error}')
@@ -148,8 +152,7 @@ class GetterEvents(_ProtoGetter):
         data = [artist.name for artist in lastfm.topartists.artist]
         return data
 
-    def _get_events(self,
-                    events: typing.List[Event], artists: typing.List[str]) -> typing.List[Event]:
+    def _get_events(self, events: typing.List[Event], artists: typing.List[str]) -> typing.List[Event]:
         """
         The function filters passed Events list by the passed list of artists.
         :param events: events data from KudaGo API.

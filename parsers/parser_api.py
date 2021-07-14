@@ -39,11 +39,13 @@ class ParserApi:
 
         self.logger.info('Add events to DB')
         for event in events:
-            database.Events.add(event_id=event.id,
-                                title=event.title,
-                                slug=event.slug,
-                                place_id=event.place.id,
-                                price=event.price)
+            database.Events.add(
+                event_id=event.id,
+                title=event.title,
+                slug=event.slug,
+                place_id=event.place.id,
+                price=event.price
+            )
             for date in event.dates:
                 database.EventDates.add(event_id=event.id, date_start=date.start, date_stop=date.end)
 
@@ -51,8 +53,9 @@ class ParserApi:
     def _check_place_is_present(event: Event, places: typing.List[PlaceDetails]) -> bool:
         is_present = False
         for place in places:
-            if event.place.id == place.id and event.place.id is not None:
-                is_present = True
-            if event.place.id is None:
-                is_present = True
+            if event.place:
+                if event.place.id == place.id:
+                    is_present = True
+                if not event.place.id:
+                    is_present = True
         return is_present

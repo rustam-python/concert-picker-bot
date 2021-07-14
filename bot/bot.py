@@ -38,7 +38,7 @@ class Bot:
                     self._send_messages(bot=bot, events=events)
             time.sleep(settings.App.delay_time)
 
-    def _get_events(self) -> typing.List[_Event]:
+    def _get_events(self) -> typing.Optional[typing.List[_Event]]:
         result = None
         try:
             query = (
@@ -72,9 +72,11 @@ class Bot:
                     f'_Место_: {event.place_name} ({event.place_address});\n\n'
                     f'_Билеты_: {event.price}.'
                 )
-                bot.send_message(chat_id=settings.APIs.telegram_chat_id,
-                                 text=f'\U0001F3B8 *Новые концерты*\n\n{message}',
-                                 parse_mode='Markdown')
+                bot.send_message(
+                    chat_id=settings.APIs.telegram_chat_id,
+                    text=f'\U0001F3B8 *Новые концерты*\n\n{message}',
+                    parse_mode='Markdown'
+                )
                 sent_ids.append(event.event_id)
                 self.logger.success('Message was successfully sent')
             except Exception:

@@ -42,4 +42,3 @@ class DataBase(BaseSection):
 
 class App(BaseSection):
     delay_time = IntegerField(default=3600)
-
