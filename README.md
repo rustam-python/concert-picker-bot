@@ -21,7 +21,7 @@ These instructions will get you a copy of the Concert picker bot up and running 
 1. Clone the repo:
 ```console
 $ git clone https://github.com/rustam-python/Concert-picker-bot.git
-$ cd Concert-picker-bot
+$ cd Concert-picker-bot/
 ```
 2. Create `venv`:
 ```console
@@ -49,7 +49,7 @@ telegram_token = your_tg_key
 telegram_chat_id=your_tg_chat_id
 
 [DataBase]
-; If you are using SQLite just leave it empty.
+; If you are using SQLite3 just leave it empty.
 username
 password
 host
