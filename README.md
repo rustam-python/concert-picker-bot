@@ -18,7 +18,7 @@ A Telegram bot designed for concert searching based on requests to API of kudago
 These instructions will get you a copy of the Concert picker bot up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Installation
-1. 1.  Clone repo
+1. Clone repo
 ```console
 $ git clone https://github.com/rustam-python/Concert-picker-bot.git
 $ cd Concert-picker-bot
