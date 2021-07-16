@@ -12,7 +12,14 @@ class ParserApi:
     def __init__(self):
         self.logger = logger.Logger(name=self.__class__.__name__)
 
-    def proc(self) -> bool:
+    def start(self) -> bool:
+        self.logger.info('APIs parsing is started')
+        result = self._exec_scan()
+        if result:
+            self.logger.success('APIs parsing is completed')
+        return result
+
+    def _exec_scan(self) -> bool:
         result = False
         try:
             events: typing.Optional[typing.List[Event]] = getters.GetterEvents().get()

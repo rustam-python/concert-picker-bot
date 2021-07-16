@@ -13,7 +13,8 @@ __all__ = [
 ]
 
 from logging import FileHandler, Formatter
-# We pass some classes and variables form original logging library for convenience as method to provide single import point
+# We pass some classes and variables form original logging library for convenience
+# as method to provide single import point
 from logging import INFO, ERROR, DEBUG, CRITICAL, WARNING, FATAL
 
 from .logger import CustomFormatter

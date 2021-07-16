@@ -32,7 +32,7 @@ class Bot:
         bot = telebot.TeleBot(settings.APIs.telegram_token)
         while True:
             parser = parsers.ParserApi()
-            if parser.proc():
+            if parser.start():
                 events = self._get_events()
                 if events:
                     self._send_messages(bot=bot, events=events)
@@ -65,10 +65,11 @@ class Bot:
         tz = pytz.timezone('Europe/Moscow')
         sent_ids = []
         for i, event in enumerate(events, start=1):
+            date = event.date_start.replace(tzinfo=datetime.timezone.utc).astimezone(tz=tz).strftime("%d.%m.%Y %H:%M")
             try:
                 message = (
                     f'{i}. *{event.title}*:\n\n'
-                    f'_Дата_: {event.date_start.replace(tzinfo=datetime.timezone.utc).astimezone(tz=tz).strftime("%d.%m.%Y %H:%M")};\n\n'
+                    f'_Дата_: {date};\n\n'
                     f'_Место_: {event.place_name} ({event.place_address});\n\n'
                     f'_Билеты_: {event.price}.'
                 )
