@@ -50,7 +50,12 @@ class Events(BaseModel):
     is_sent = BooleanField(default=False)
 
     @classmethod
-    def add(cls, event_id: int, title: str, slug: str, place_id: int, price: typing.Optional[str]) -> 'Events':
+    def add(cls,
+            event_id: int,
+            title: str,
+            slug: str,
+            place_id: typing.Optional[int],
+            price: typing.Optional[str]) -> 'Events':
         return cls.get_or_create(event_id=event_id,
                                  title=title,
                                  slug=slug,

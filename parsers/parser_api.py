@@ -15,39 +15,35 @@ class ParserApi:
     def proc(self) -> bool:
         result = False
         try:
-            self.logger.info('APIs parsing is started')
-            self._exec_scan()
-            result = True
-            self.logger.success('APIs check is completed')
+            events: typing.Optional[typing.List[Event]] = getters.GetterEvents().get()
+            if events:
+                places_ids = list({event.place.id for event in events if event.place})
+                places: typing.List[PlaceDetails] = getters.GetterPlaceDetails(places_ids).get()
+
+                self.logger.info('Filter events')
+                for event in events:
+                    if not self._check_place_is_present(event=event, places=places):
+                        events.remove(event)
+
+                self.logger.info('Add places to DB')
+                for place in places:
+                    database.Place.add(place_id=place.id, address=place.address, title=place.title)
+
+                self.logger.info('Add events to DB')
+                for event in events:
+                    database.Events.add(
+                        event_id=event.id,
+                        title=event.title,
+                        slug=event.slug,
+                        place_id=event.place.id if event.place else None,
+                        price=event.price
+                    )
+                    for date in event.dates:
+                        database.EventDates.add(event_id=event.id, date_start=date.start, date_stop=date.end)
+                result = True
         except Exception as e:
             self.logger.critical(f'Error occurred during APIs parsing: {e}', stack_info=True)
         return result
-
-    def _exec_scan(self):
-        events: typing.List[Event] = getters.GetterEvents().get()
-        places_ids = list({event.place.id for event in events})
-        places: typing.List[PlaceDetails] = getters.GetterPlaceDetails(places_ids).get()
-
-        self.logger.info('Filter events')
-        for event in events:
-            if not self._check_place_is_present(event=event, places=places):
-                events.remove(event)
-
-        self.logger.info('Add places to DB')
-        for place in places:
-            database.Place.add(place_id=place.id, address=place.address, title=place.title)
-
-        self.logger.info('Add events to DB')
-        for event in events:
-            database.Events.add(
-                event_id=event.id,
-                title=event.title,
-                slug=event.slug,
-                place_id=event.place.id,
-                price=event.price
-            )
-            for date in event.dates:
-                database.EventDates.add(event_id=event.id, date_start=date.start, date_stop=date.end)
 
     @staticmethod
     def _check_place_is_present(event: Event, places: typing.List[PlaceDetails]) -> bool:
