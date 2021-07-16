@@ -18,10 +18,10 @@ A Telegram bot designed for concert searching based on requests to API of kudago
 These instructions will get you a copy of the Concert picker bot up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Installation
-1. 1.  Clone repo
+1. Clone the repo:
 ```console
 $ git clone https://github.com/rustam-python/Concert-picker-bot.git
-$ cd Concert-picker-bot
+$ cd Concert-picker-bot/
 ```
 2. Create `venv`:
 ```console
@@ -36,10 +36,10 @@ $ source venv/bin/activate
 The application uses configuration file `cbp-config.ini`. To use the application your way, you need to create in the following configuration file (or just start the app - it will create automatically in `settings/`):
 ```ini
 [APIs]
-;KudaGo API URL
+; KudaGo API URL
 kudago_url = https://kudago.com/public-api/v1.4/events/?lang=&page_size=100&fields=id,dates,title,place,slug,price&expand=&order_by=&text_format=&ids=&location=msk&actual_since={}&actual_until=&is_free=&categories=concert
 
-;LastFM API URL
+; LastFM API URL
 lastfm_url = http://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user={}&period=overall&limit={}&api_key={}&format=json
 
 lastfm_username = your_last_fm_username
@@ -49,7 +49,7 @@ telegram_token = your_tg_key
 telegram_chat_id=your_tg_chat_id
 
 [DataBase]
-; If you are using SQLite just leave it empty.
+; If you are using SQLite3 just leave it empty.
 username
 password
 host
