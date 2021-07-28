@@ -15,6 +15,10 @@ class PlaceDetails(pydantic.BaseModel):
     title: str
 
 
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
+
+
 # noinspection PyBroadException
 class GetterPlaceDetails(_ProtoGetter):
     def __init__(self, places_ids: typing.List[int]):
@@ -36,7 +40,7 @@ class GetterPlaceDetails(_ProtoGetter):
         results = []
         chunks = [places_ids[x:x + 6] for x in range(0, len(places_ids), 6)]
         for chunk in chunks:  # We can make only 6 requests per second to KudaGo API.
-            results += asyncio.get_event_loop().run_until_complete(self._make_requests(places_ids=chunk))
+            results += loop.run_until_complete(self._make_requests(places_ids=chunk))
             time.sleep(1)
         return results
 

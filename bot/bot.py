@@ -30,25 +30,25 @@ class Bot:
 
     def start(self):
         bot = telebot.TeleBot(settings.APIs.telegram_token)
-        while True:
-            parser = parsers.ParserApi()
-            if parser.start():
-                events = self._get_events()
-                if events:
-                    self._send_messages(bot=bot, events=events)
-            time.sleep(settings.App.delay_time)
+        parser = parsers.ParserApi()
+        if parser.start():
+            events = self._get_events()
+            if events:
+                self._send_messages(bot=bot, events=events)
 
     def _get_events(self) -> typing.Optional[typing.List[_Event]]:
         result = None
         try:
             query = (
-                database.Events.select(database.Events.event_id,
-                                       database.Events.title,
-                                       database.Place.title.alias('place_name'),
-                                       database.Place.address.alias('place_address'),
-                                       database.EventDates.date_start,
-                                       database.EventDates.date_stop,
-                                       database.Events.price).
+                database.Events.
+                    select(database.Events.event_id,
+                           database.Events.title,
+                           database.Place.title.alias('place_name'),
+                           database.Place.address.alias('place_address'),
+                           database.EventDates.date_start,
+                           database.EventDates.date_stop,
+                           database.Events.price
+                    ).
                     join(database.Place).switch(database.Events).
                     join(database.EventDates, join_type=peewee.JOIN.LEFT_OUTER).
                     where(database.Events.is_sent != True).
