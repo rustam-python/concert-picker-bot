@@ -1,7 +1,7 @@
-import bot
 import database
 import settings
+import threads
 
 database.initialize_data_base()
 settings.check_config_integrity()
-bot.Bot().start()
+threads.ThreadHolder.get_bot_thread()
