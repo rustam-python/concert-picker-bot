@@ -17,13 +17,8 @@ class BaseSection(Section):
 
 
 class APIs(BaseSection):
-    kudago_url = StringField(
-        default='https://kudago.com/public-api/v1.4/events/?lang=&page_size=100&fields=id,dates,title,place,slug,price&'
-                'expand=&order_by=&text_format=&ids=&location=msk&actual_since={}&actual_until=&is_free=&'
-                'categories=concert')
-    lastfm_url = StringField(
-        default='http://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user={}&period=overall&limit={}&'
-                'api_key={}&format=json')
+    kudago_url = StringField(default='https://kudago.com/public-api/v1.4/events/?lang=&page_size=100&fields=id,dates,title,place,slug,price&expand=&order_by=&text_format=&ids=&location=msk&actual_since={}&actual_until=&is_free=&categories=concert')  # noqa: E501
+    lastfm_url = StringField(default='http://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user={}&period=overall&limit={}&api_key={}&format=json')  # noqa: E501
     lastfm_username = StringField(null=True)
     lastfm_token = StringField(null=True)
     lastfm_artists_limit = IntegerField(default=300)
@@ -35,10 +30,20 @@ class DataBase(BaseSection):
     username = StringField(null=True)
     password = StringField(null=True)
     host = StringField(null=True)
+    port = StringField(null=True)
     name = StringField(null=True)
     transaction_retry_limit = IntegerField(default=5)
     bunch_size = IntegerField(default=1000)
 
 
 class App(BaseSection):
-    delay_time = IntegerField(default=3600)
+    bot_request_timeout = IntegerField(default=3600)
+    data_getter_timeout = IntegerField(default=18000)
+
+
+class Redis(BaseSection):
+    host = StringField(null=True)
+    port = IntegerField(null=True)
+    password = StringField(null=True)
+    db_cache = IntegerField(null=True)
+    ttl = IntegerField(default=604800)
