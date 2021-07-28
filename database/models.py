@@ -10,6 +10,7 @@ from peewee import (
     PostgresqlDatabase
 )
 
+import cache
 import settings
 
 local_db = SqliteDatabase(os.path.join(os.path.dirname(__file__), 'cpb-local-db'))
@@ -167,8 +168,8 @@ class Scrobble(BaseModel):
             return cls.get(cls.scrobble_date == scrobble_date)
         except cls.DoesNotExist:
             return cls.create(
-                track=Track.add(track),
-                artist=Artist.add(artist),
-                album=Album.add(album),
+                track=cache.Caching.get_track_id(track),
+                artist=cache.Caching.get_artist_id(artist),
+                album=cache.Caching.get_album_id(album),
                 scrobble_date=scrobble_date
             )
