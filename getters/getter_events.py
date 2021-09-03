@@ -102,7 +102,7 @@ class GetterEvents(_ProtoGetter):
     This class returns the list of Events.
     """
 
-    def get(self) -> typing.Optional[typing.List[Event]]:
+    def get_data(self) -> typing.Optional[typing.List[Event]]:
         result = None
         try:
             kudago_url = settings.APIs.kudago_url.format(time.time())
@@ -110,7 +110,7 @@ class GetterEvents(_ProtoGetter):
             artists = self._get_scrobbled_artists()
             result = self._get_events(events=events, artists=artists)
         except Exception:
-            self.logger.critical('Failed to get events from KudaGo', stack_info=True)
+            self.logger.error("Failed to get data from API's", stack_info=True)
         return result
 
     def _get_kudago_data(self, url: str, counter: int = 1) -> typing.List[Event]:
@@ -146,7 +146,7 @@ class GetterEvents(_ProtoGetter):
         )
         if not response.ok:
             error = response.json().get('message')
-            self.logger.critical(f'Failed to get LastFM data: {error}')
+            self.logger.error(f'Failed to get LastFM data: {error}')
             raise LastfmError
         lastfm = _Artists(**response.json())
         data = [artist.name for artist in lastfm.topartists.artist]

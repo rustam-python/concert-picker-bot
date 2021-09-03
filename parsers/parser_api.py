@@ -22,10 +22,10 @@ class ParserApi:
     def _exec_scan(self) -> bool:
         result = False
         try:
-            events: typing.Optional[typing.List[Event]] = getters.GetterEvents().get()
+            events: typing.Optional[typing.List[Event]] = getters.GetterEvents().get_data()
             if events:
                 places_ids = list({event.place.id for event in events if event.place})
-                places: typing.List[PlaceDetails] = getters.GetterPlaceDetails(places_ids).get()
+                places: typing.List[PlaceDetails] = getters.GetterPlaceDetails(places_ids).get_data()
 
                 self.logger.info('Filter events')
                 for event in events:

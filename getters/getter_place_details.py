@@ -26,7 +26,7 @@ class GetterPlaceDetails(_ProtoGetter):
         self.places_ids: typing.List[int] = places_ids
         self._ids_for_retry: typing.List[int] = []
 
-    def get(self) -> typing.List[PlaceDetails]:
+    def get_data(self) -> typing.List[PlaceDetails]:
         self.logger.info('Get details for events places')
         results = self._get_places_data(self.places_ids)
         if self._ids_for_retry:
