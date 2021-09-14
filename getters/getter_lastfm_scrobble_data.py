@@ -12,9 +12,6 @@ import cache
 import logger
 import settings
 
-my_logger = logger.Logger(name='LastFM Scrobble Data')
-
-
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
 
@@ -36,13 +33,31 @@ class Page:
     scrobbles: typing.List[Scrobble] = dataclasses.field(default_factory=list)
 
 
-class LastFMDataGetter:
+class LastFMScrobbleDataGetter:
 
     def __init__(self):
         self._pages_for_retry = []
         self.logger = logger.Logger(name=self.__class__.__name__)
 
-    def get_scrobbles(self) -> typing.List[Page]:
+    def get_scrobbles(self):
+        try:
+            self.logger.info('Getting data')
+            start = time.time()
+            pages = self._get_scrobbles()
+            self.logger.info('Start DB update...')
+            for page in pages:
+                for scrobble in page.scrobbles:
+                    cache.Caching.get_scrobble_id(
+                        track=scrobble.track,
+                        artist=scrobble.artist,
+                        album=scrobble.album,
+                        scrobble_date=scrobble.date
+                    )
+            self.logger.success(f'DB update finished with {round(time.time() - start, 2)} seconds.')
+        except Exception as e:
+            self.logger.error(f'Error during getting data: {e}', stack_info=True)
+
+    def _get_scrobbles(self) -> typing.List[Page]:
         self.logger.info('Getting scrobbles from LastFM started.')
         max_page_number = self._get_total_pages_count()
 
@@ -122,24 +137,3 @@ class LastFMDataGetter:
             self.logger.error(f'Error: {error}')
             raise RuntimeError
         return await response.json()
-
-
-class StarterGetData:
-    @staticmethod
-    def start_getting_data():
-        try:
-            my_logger.info('Getting data')
-            start = time.time()
-            pages = LastFMDataGetter().get_scrobbles()
-            my_logger.info('Start DB update...')
-            for page in pages:
-                for scrobble in page.scrobbles:
-                    cache.Caching.get_scrobble_id(
-                        track=scrobble.track,
-                        artist=scrobble.artist,
-                        album=scrobble.album,
-                        scrobble_date=scrobble.date
-                    )
-            my_logger.success(f'DB update finished with {round(time.time() - start, 2)} seconds.')
-        except Exception as e:
-            my_logger.error(f'Error during getting data: {e}', stack_info=True)

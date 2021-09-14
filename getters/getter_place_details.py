@@ -26,7 +26,7 @@ class GetterPlaceDetails(_ProtoGetter):
         self.places_ids: typing.List[int] = places_ids
         self._ids_for_retry: typing.List[int] = []
 
-    def get(self) -> typing.List[PlaceDetails]:
+    def get_data(self) -> typing.List[PlaceDetails]:
         self.logger.info('Get details for events places')
         results = self._get_places_data(self.places_ids)
         if self._ids_for_retry:
@@ -39,6 +39,7 @@ class GetterPlaceDetails(_ProtoGetter):
     def _get_places_data(self, places_ids: typing.List[int]):
         results = []
         chunks = [places_ids[x:x + 6] for x in range(0, len(places_ids), 6)]
+
         for chunk in chunks:  # We can make only 6 requests per second to KudaGo API.
             results += loop.run_until_complete(self._make_requests(places_ids=chunk))
             time.sleep(1)

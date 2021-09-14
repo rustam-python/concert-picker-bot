@@ -1,5 +1,4 @@
 import datetime
-import time
 import typing
 
 import peewee
@@ -21,6 +20,7 @@ class _Event(pydantic.BaseModel):
     date_start: datetime.datetime
     date_stop: datetime.datetime
     price: str
+    updated: bool
 
 
 # noinspection PyBroadException
@@ -47,7 +47,8 @@ class Bot:
                            database.Place.address.alias('place_address'),
                            database.EventDates.date_start,
                            database.EventDates.date_stop,
-                           database.Events.price
+                           database.Events.price,
+                           database.Events.updated
                     ).
                     join(database.Place).switch(database.Events).
                     join(database.EventDates, join_type=peewee.JOIN.LEFT_OUTER).
@@ -68,7 +69,7 @@ class Bot:
             date = event.date_start.replace(tzinfo=datetime.timezone.utc).astimezone(tz=tz).strftime("%d.%m.%Y %H:%M")
             try:
                 message = (
-                    f'{i}. *{event.title}*:\n\n'
+                    f'{i}. *{event.title}*{"(_Обновлённая информация_)" if event.updated else ""}:\n\n'
                     f'_Дата_: {date};\n\n'
                     f'_Место_: {event.place_name} ({event.place_address});\n\n'
                     f'_Билеты_: {event.price}.'

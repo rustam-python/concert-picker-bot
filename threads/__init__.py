@@ -1,10 +1,10 @@
 __all__ = [
     'BotThread',
-    'LastFMDataThread',
+    'LastFMScrobbleDataThread',
     'ThreadHolder'
 
 ]
 
 from .thread_bot import BotThread
-from .thread_data_getter import LastFMDataThread
+from .thread_data_getter import LastFMScrobbleDataThread
 from .thread_holder import ThreadHolder

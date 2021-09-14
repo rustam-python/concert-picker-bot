@@ -19,10 +19,10 @@ class CustomFormatter(logging.Formatter):
     FORMATS = {
         logging.DEBUG: grey,
         logging.INFO: white,
+        SUCCESS: green,
         logging.WARNING: yellow,
         logging.ERROR: red,
         logging.CRITICAL: bold_red,
-        SUCCESS: green
     }
 
     def __init__(self):

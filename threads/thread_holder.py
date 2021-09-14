@@ -1,11 +1,11 @@
 import typing
 
 import settings
-from threads import LastFMDataThread, BotThread
+from threads import LastFMScrobbleDataThread, BotThread
 
 
 class ThreadHolder:
-    _lastfm_data_thread: typing.Optional[LastFMDataThread] = None
+    _lastfm_data_thread: typing.Optional[LastFMScrobbleDataThread] = None
     _bot_thread: typing.Optional[BotThread] = None
 
     @classmethod
@@ -16,9 +16,9 @@ class ThreadHolder:
                 thread.join()
 
     @classmethod
-    def get_lastfm_data_thread(cls) -> LastFMDataThread:
+    def get_lastfm_data_thread(cls) -> LastFMScrobbleDataThread:
         if cls._lastfm_data_thread is None:
-            cls._lastfm_data_thread = LastFMDataThread(settings.App.data_getter_timeout)
+            cls._lastfm_data_thread = LastFMScrobbleDataThread(settings.App.data_getter_timeout)
             cls._lastfm_data_thread.start()
         return cls._lastfm_data_thread
 

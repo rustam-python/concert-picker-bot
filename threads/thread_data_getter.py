@@ -6,7 +6,7 @@ import getters
 import logger
 
 
-class LastFMDataThread(threading.Thread):
+class LastFMScrobbleDataThread(threading.Thread):
     def __init__(self, data_getter_timeout: int):
         self.logger = logger.Logger(name=self.__class__.__name__)
         self.data_getter_timeout = data_getter_timeout
@@ -16,18 +16,18 @@ class LastFMDataThread(threading.Thread):
 
         self._is_running.set()
 
-        super(LastFMDataThread, self).__init__()
+        super(LastFMScrobbleDataThread, self).__init__()
         self.setDaemon(daemonic=False)
 
     def run(self) -> None:
 
-        getters.StarterGetData.start_getting_data()
+        getters.LastFMScrobbleDataGetter().get_scrobbles()
         while not self._stop_event.is_set():
             start_time = datetime.datetime.now()
             if self._is_running.is_set():
                 while (datetime.datetime.now() - start_time).seconds < (self.data_getter_timeout + 1):
                     time.sleep(2)
-                getters.StarterGetData.start_getting_data()
+                getters.LastFMScrobbleDataGetter().get_scrobbles()
 
     def pause(self) -> None:
         self._is_running.clear()
