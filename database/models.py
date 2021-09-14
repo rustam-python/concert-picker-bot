@@ -7,7 +7,7 @@ import typing
 
 from peewee import (
     CharField, Model, ForeignKeyField, IntegerField, Proxy, SqliteDatabase, BooleanField, DateTimeField, AutoField,
-    PostgresqlDatabase
+    PostgresqlDatabase, CompositeKey, IntegrityError
 )
 
 import cache
@@ -86,12 +86,13 @@ class Place(BaseModel):
 class Events(BaseModel):
     migration_priority = 1
 
-    event_id = IntegerField(primary_key=True, index_type=True)
+    event_id = IntegerField(primary_key=True)
     title = CharField()
     slug = CharField()
     place_id = ForeignKeyField(Place, null=True)
     price = CharField(null=True)
     is_sent = BooleanField(default=False)
+    updated = BooleanField(default=False)
 
     @classmethod
     def add(cls,
@@ -101,15 +102,31 @@ class Events(BaseModel):
             place_id: typing.Optional[int],
             price: typing.Optional[str]
             ) -> 'Events':
-        return cls.get_or_create(
-            event_id=event_id,
-            title=title,
-            slug=slug,
-            place_id=Place.get(place_id=place_id),
-            price=price)[0]
+        try:
+            return cls.get_or_create(
+                event_id=event_id,
+                title=title,
+                slug=slug,
+                place_id=Place.get(place_id=place_id),
+                price=price)[0]
+        except IntegrityError:
+            cls.delete().where(cls.event_id == event_id).execute()
+            return cls.create(
+                event_id=event_id,
+                title=title,
+                slug=slug,
+                place_id=Place.get(place_id=place_id),
+                price=price,
+                updated=True
+            )
 
-    def mark_as_sent(self):
-        Events.update(is_sent=True).where(Events.event_id == self.event_id).execute()
+    @classmethod
+    def mark_as_sent(cls):
+        cls.update(is_sent=True).where(Events.event_id == cls.event_id).execute()
+
+    @classmethod
+    def mark_as_unsent(cls):
+        cls.update(is_sent=False).where(Events.event_id == cls.event_id).execute()
 
 
 class EventDates(BaseModel):
