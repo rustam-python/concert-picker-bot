@@ -20,7 +20,6 @@ class LastFMScrobbleDataThread(threading.Thread):
         self.setDaemon(daemonic=False)
 
     def run(self) -> None:
-
         getters.LastFMScrobbleDataGetter().get_scrobbles()
         while not self._stop_event.is_set():
             start_time = datetime.datetime.now()

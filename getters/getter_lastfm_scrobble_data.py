@@ -81,7 +81,7 @@ class LastFMScrobbleDataGetter:
         This function gets total scrobbles pages count for downloading.
         """
         r = requests.get(
-            f'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=200&user={settings.APIs.lastfm_username}&api_key={settings.APIs.lastfm_token}&format=json'
+            f'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=200&user={settings.APIs.lastfm_username}&api_key={settings.APIs.lastfm_token}&format=json'  # noqa: E501
         )
         _json = r.json()
         return int(_json['recenttracks']['@attr']['totalPages'])
