@@ -7,7 +7,7 @@ import typing
 
 from peewee import (
     CharField, Model, ForeignKeyField, IntegerField, Proxy, SqliteDatabase, BooleanField, DateTimeField, AutoField,
-    PostgresqlDatabase, CompositeKey, IntegrityError
+    PostgresqlDatabase
 )
 
 import cache
@@ -103,22 +103,16 @@ class Events(BaseModel):
             price: typing.Optional[str]
             ) -> 'Events':
         try:
-            return cls.get_or_create(
+            return cls.get(cls.event_id == event_id)
+        except cls.DoesNotExist:
+            new = cls.create(
                 event_id=event_id,
                 title=title,
                 slug=slug,
                 place_id=Place.get(place_id=place_id),
-                price=price)[0]
-        except IntegrityError:
-            cls.delete().where(cls.event_id == event_id).execute()
-            return cls.create(
-                event_id=event_id,
-                title=title,
-                slug=slug,
-                place_id=Place.get(place_id=place_id),
-                price=price,
-                updated=True
+                price=price
             )
+            return new
 
     @classmethod
     def mark_as_sent(cls):
