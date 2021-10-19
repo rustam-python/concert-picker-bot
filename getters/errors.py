@@ -1,4 +1,4 @@
-class LastfmError(Exception):
+class LastFMError(Exception):
     pass
 
 

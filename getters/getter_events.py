@@ -1,14 +1,15 @@
 import abc
-import json
+import datetime
 import time
 import typing
 
 import requests
 
+import database
 import logger
 import schemas
 import settings
-from getters.errors import KudagoError
+from getters.errors import KudagoError, LastFMError
 
 
 class _ProtoGetter:
@@ -33,8 +34,9 @@ class GetterEvents(_ProtoGetter):
             events = self._get_kudago_data(kudago_url)
             artists = self._get_scrobbled_artists()
             events_list = self._get_events(events=events, artists=artists)
-        except Exception:
-            self.logger.error("Failed to get data from API's", stack_info=True)
+        except Exception as e:
+            self.logger.error(f"Failed to get data from API's: {e}", stack_info=True)
+            database.Log.add(datetime.datetime.now(), "Failed to get data from API's", 'error')
         return events_list
 
     def _get_kudago_data(self, url: str, counter: int = 1) -> typing.List[schemas.Event]:
@@ -47,8 +49,9 @@ class GetterEvents(_ProtoGetter):
         response = requests.get(url)
         if not response.ok:
             error = response.json().get('detail')
-            self.logger.error(f'Failed to get KudaGo data: {error}')
-            raise KudagoError
+            message = f'Failed to get KudaGo data: {error}'
+            self.logger.error(message)
+            raise KudagoError(message)
         kudago = schemas.Events(**response.json())
         if not kudago.next:
             return kudago.results
@@ -61,26 +64,23 @@ class GetterEvents(_ProtoGetter):
         :return: list of artists
         """
         self.logger.info('Request LastFM API for scrobbled artists list')
-        # try:
-        #     response = requests.get(
-        #         settings.APIs.lastfm_url.format(
-        #             settings.APIs.lastfm_username,
-        #             settings.APIs.lastfm_artists_limit,
-        #             settings.APIs.lastfm_token
-        #         )
-        #     )
-        # except Exception as e:
-        #     self.logger.error('Failed to get LastFM data')
-        #     raise e
-        # if not response.ok:
-        #     error = response.json().get('message')
-        #     self.logger.error(f'Failed to get LastFM data: {error}')
-        #     raise LastfmError
-        # lastfm = schemas.Artists(**response.json())
-        # data = [artist.name for artist in lastfm.topartists.artist]
-        with open('getters/test.json', 'r', encoding='UTF-8') as f:
-            test_response = json.loads(f.read())
-        lastfm = schemas.Artists(**test_response)
+        try:
+            response = requests.get(
+                settings.APIs.lastfm_url.format(
+                    settings.APIs.lastfm_username,
+                    settings.APIs.lastfm_artists_limit,
+                    settings.APIs.lastfm_token
+                )
+            )
+        except Exception as e:
+            self.logger.error('Failed to get LastFM data')
+            raise e
+        if not response.ok:
+            error = response.json().get('message')
+            message = f'Failed to get LastFM data: {error}'
+            self.logger.error(message)
+            raise LastFMError(message)
+        lastfm = schemas.Artists(**response.json())
         data = [artist.name for artist in lastfm.topartists.artist]
         return data
 

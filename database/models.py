@@ -164,6 +164,10 @@ class Track(_DictionaryModel):
     pass
 
 
+class LogLevel(_DictionaryModel):
+    pass
+
+
 class Scrobble(BaseModel):
     migration_priority = 1
 
@@ -184,3 +188,20 @@ class Scrobble(BaseModel):
                 album=cache.Caching.get_album_id(album),
                 scrobble_date=scrobble_date
             )
+
+
+class Log(BaseModel):
+    migration_priority = 1
+
+    id = AutoField()
+    date = DateTimeField()
+    message = CharField()
+    level = ForeignKeyField(LogLevel)
+
+    @classmethod
+    def add(cls, date: datetime.datetime, message: str, level: str) -> 'Log':
+        return cls.create(
+            date=date,
+            message=message,
+            level=LogLevel.add(level)
+        )

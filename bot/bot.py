@@ -61,6 +61,7 @@ class Bot:
             result = [_Event(**data) for data in events]
         except Exception:
             self.logger.critical('Error occurred during events DB request', stack_info=True)
+            database.Log.add(datetime.datetime.now(), 'Error occurred during events DB request', 'critical')
         return result
 
     def _send_messages(self, bot: telebot.TeleBot, events: typing.List[_Event]):
@@ -84,7 +85,9 @@ class Bot:
                 self.logger.success('Message was successfully sent')
             except Exception:
                 self.logger.critical('Error occurred during message sending', stack_info=True)
+                database.Log.add(datetime.datetime.now(), 'Error occurred during message sending', 'critical')
         try:
             database.Events.update(is_sent=True).where(database.Events.event_id.in_(sent_ids)).execute()
         except Exception:
             self.logger.critical('Error occurred during marking events as sent', stack_info=True)
+            database.Log.add(datetime.datetime.now(), 'Error occurred during marking events as sent', 'critical')
