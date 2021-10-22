@@ -80,7 +80,15 @@ class Place(BaseModel):
 
     @classmethod
     def add(cls, place_id: int, address: str, title: str) -> 'EventDates':
-        return cls.get_or_create(place_id=place_id, address=address, title=title)[0]
+        try:
+            return cls.get(cls.place_id == place_id)
+        except cls.DoesNotExist:
+            new = cls.create(
+                place_id=place_id,
+                address=address,
+                title=title
+            )
+            return new
 
 
 class Events(BaseModel):
