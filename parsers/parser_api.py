@@ -23,10 +23,10 @@ class ParserApi:
     def _exec_scan(self) -> bool:
         result = False
         try:
-            events: typing.Optional[typing.List[schemas.Event]] = getters.GetterEvents().get_data()
+            events: typing.Optional[list[schemas.Event]] = getters.GetterEvents().get_data()
             if events:
                 places_ids = list({event.place.id for event in events if event.place})
-                places: typing.List[PlaceDetails] = getters.GetterPlaceDetails(places_ids).get_data()
+                places: list[PlaceDetails] = getters.GetterPlaceDetails(places_ids).get_data()
 
                 self.logger.info('Filter events')
                 for event in events:
@@ -55,7 +55,7 @@ class ParserApi:
         return result
 
     @staticmethod
-    def _check_place_is_present(event: schemas.Event, places: typing.List[PlaceDetails]) -> bool:
+    def _check_place_is_present(event: schemas.Event, places: list[PlaceDetails]) -> bool:
         is_present = False
         for place in places:
             if event.place:

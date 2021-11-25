@@ -30,7 +30,7 @@ class Scrobble:
 @dataclasses.dataclass
 class Page:
     number: int
-    scrobbles: typing.List[Scrobble] = dataclasses.field(default_factory=list)
+    scrobbles: list[Scrobble] = dataclasses.field(default_factory=list)
 
 
 class LastFMScrobbleDataGetter:
@@ -57,7 +57,7 @@ class LastFMScrobbleDataGetter:
         except Exception as e:
             self.logger.error(f'Error during getting data: {e}', stack_info=True)
 
-    def _get_scrobbles(self) -> typing.List[Page]:
+    def _get_scrobbles(self) -> list[Page]:
         self.logger.info('Getting scrobbles from LastFM started.')
         max_page_number = self._get_total_pages_count()
 

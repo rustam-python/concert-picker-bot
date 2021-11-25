@@ -1,6 +1,5 @@
 import asyncio
 import time
-import typing
 
 import aiohttp
 import pydantic
@@ -21,12 +20,12 @@ asyncio.set_event_loop(loop)
 
 # noinspection PyBroadException
 class GetterPlaceDetails(_ProtoGetter):
-    def __init__(self, places_ids: typing.List[int]):
+    def __init__(self, places_ids: list[int]):
         super().__init__()
-        self.places_ids: typing.List[int] = places_ids
-        self._ids_for_retry: typing.List[int] = []
+        self.places_ids: list[int] = places_ids
+        self._ids_for_retry: list[int] = []
 
-    def get_data(self) -> typing.List[PlaceDetails]:
+    def get_data(self) -> list[PlaceDetails]:
         self.logger.info('Get details for events places')
         results = self._get_places_data(self.places_ids)
         if self._ids_for_retry:
@@ -36,7 +35,7 @@ class GetterPlaceDetails(_ProtoGetter):
                 count -= 1
         return [PlaceDetails(**result) for result in results if result is not None]
 
-    def _get_places_data(self, places_ids: typing.List[int]):
+    def _get_places_data(self, places_ids: list[int]):
         results = []
         chunks = [places_ids[x:x + 6] for x in range(0, len(places_ids), 6)]
 
@@ -45,7 +44,7 @@ class GetterPlaceDetails(_ProtoGetter):
             time.sleep(1)
         return results
 
-    async def _make_requests(self, places_ids: typing.List[int]):
+    async def _make_requests(self, places_ids: list[int]):
         async with aiohttp.ClientSession() as session:
             tasks = []
             for place_id in places_ids:

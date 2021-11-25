@@ -36,7 +36,7 @@ class Bot:
             if events:
                 self._send_messages(bot=bot, events=events)
 
-    def _get_events(self) -> typing.Optional[typing.List[_Event]]:
+    def _get_events(self) -> typing.Optional[list[_Event]]:
         result = None
         try:
             query = (
@@ -64,7 +64,7 @@ class Bot:
             database.Log.add(datetime.datetime.now(), 'Error occurred during events DB request', 'critical')
         return result
 
-    def _send_messages(self, bot: telebot.TeleBot, events: typing.List[_Event]):
+    def _send_messages(self, bot: telebot.TeleBot, events: list[_Event]):
         tz = pytz.timezone('Europe/Moscow')
         sent_ids = []
         for i, event in enumerate(events, start=1):

@@ -27,7 +27,7 @@ class GetterEvents(_ProtoGetter):
     This class returns the list of Events.
     """
 
-    def get_data(self) -> typing.Optional[typing.List[schemas.Event]]:
+    def get_data(self) -> typing.Optional[list[schemas.Event]]:
         events_list = None
         try:
             kudago_url = settings.APIs.kudago_url.format(time.time())
@@ -39,7 +39,7 @@ class GetterEvents(_ProtoGetter):
             database.Log.add(datetime.datetime.now(), "Failed to get data from API's", 'error')
         return events_list
 
-    def _get_kudago_data(self, url: str, counter: int = 1) -> typing.List[schemas.Event]:
+    def _get_kudago_data(self, url: str, counter: int = 1) -> list[schemas.Event]:
         """
         It is a recursive function that takes the URL of the request to the KudaGo API and return data of events.
         :param url: request URL
@@ -58,7 +58,7 @@ class GetterEvents(_ProtoGetter):
         counter += 1
         return self._get_kudago_data(kudago.next, counter) + kudago.results
 
-    def _get_scrobbled_artists(self) -> typing.List[str]:
+    def _get_scrobbled_artists(self) -> list[str]:
         """
         This method requests API of LastFM for a list of 200 popular artists of the user.
         :return: list of artists
@@ -84,7 +84,7 @@ class GetterEvents(_ProtoGetter):
         data = [artist.name for artist in lastfm.topartists.artist]
         return data
 
-    def _get_events(self, events: typing.List[schemas.Event], artists: typing.List[str]) -> typing.List[schemas.Event]:
+    def _get_events(self, events: list[schemas.Event], artists: list[str]) -> list[schemas.Event]:
         """
         The function filters passed Events list by the passed list of artists.
         :param events: events data from KudaGo API.
@@ -92,7 +92,7 @@ class GetterEvents(_ProtoGetter):
         :return: filtered by artist events data
         """
         self.logger.info('Search for required artists in Events list')
-        data: typing.List[schemas.Event] = []
+        data: list[schemas.Event] = []
         for event in events:
             for artist in artists:
                 if artist in event.title and event not in data:

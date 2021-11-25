@@ -15,7 +15,7 @@ class _Dates(pydantic.BaseModel):
 
 class Event(pydantic.BaseModel):
     id: int
-    dates: typing.List[_Dates]
+    dates: list[_Dates]
     title: str
     slug: str
     place: typing.Optional[_Place]
@@ -26,7 +26,7 @@ class Events(pydantic.BaseModel):
     count: int
     next: typing.Optional[str]
     previous: typing.Optional[str]
-    results: typing.List[Event]
+    results: list[Event]
 
 
 class _TopArtistsAttr(pydantic.BaseModel):
@@ -53,7 +53,7 @@ class _Image(pydantic.BaseModel):
 
 class _Artist(pydantic.BaseModel):
     _attr: _ArtistsAttr
-    image: pydantic.conlist(_Image, min_items=5, max_items=5)
+    image: typing.Annotated[list, pydantic.conlist(_Image, min_items=5, max_items=5)]
     mbid: str
     name: str
     playcount: str
@@ -68,7 +68,7 @@ class _Artist(pydantic.BaseModel):
 
 class _TopArtists(pydantic.BaseModel):
     _attr: _TopArtistsAttr
-    artist: typing.List[_Artist]
+    artist: list[_Artist]
 
     class Config:
         fields = {
