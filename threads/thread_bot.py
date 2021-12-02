@@ -17,7 +17,6 @@ class BotThread(threading.Thread):
         self._is_running.set()
 
         super(BotThread, self).__init__()
-        self.setDaemon(daemonic=False)
 
     def run(self) -> None:
         bot.Bot().start()

@@ -17,7 +17,6 @@ class LastFMScrobbleDataThread(threading.Thread):
         self._is_running.set()
 
         super(LastFMScrobbleDataThread, self).__init__()
-        self.setDaemon(daemonic=False)
 
     def run(self) -> None:
         getters.LastFMScrobbleDataGetter().get_scrobbles()
