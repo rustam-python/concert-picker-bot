@@ -8,6 +8,7 @@ import requests
 import database
 import logger
 import schemas
+import sentry
 import settings
 from getters.errors import KudagoError, LastFMError
 
@@ -35,6 +36,7 @@ class GetterEvents(_ProtoGetter):
             artists = self._get_scrobbled_artists()
             events_list = self._get_events(events=events, artists=artists)
         except Exception as e:
+            sentry.capture_exception(e)
             self.logger.error(f"Failed to get data from API's: {e}", stack_info=True)
             database.Log.add(datetime.datetime.now(), "Failed to get data from API's", 'error')
         return events_list

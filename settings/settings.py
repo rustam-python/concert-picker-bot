@@ -39,6 +39,8 @@ class DataBase(BaseSection):
 class App(BaseSection):
     bot_request_timeout = IntegerField(default=3600)
     data_getter_timeout = IntegerField(default=18000)
+    sentry_url = StringField(null=True)
+    name = StringField(default='CPB and Scrobbler')
 
 
 class Redis(BaseSection):

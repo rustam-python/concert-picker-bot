@@ -10,6 +10,7 @@ import requests
 
 import cache
 import logger
+import sentry
 import settings
 
 loop = asyncio.new_event_loop()
@@ -55,6 +56,7 @@ class LastFMScrobbleDataGetter:
                     )
             self.logger.success(f'DB update finished with {round(time.time() - start, 2)} seconds.')
         except Exception as e:
+            sentry.capture_exception(e)
             self.logger.error(f'Error during getting data: {e}', stack_info=True)
 
     def _get_scrobbles(self) -> list[Page]:
@@ -127,6 +129,7 @@ class LastFMScrobbleDataGetter:
                 )
             page = _page
         except Exception as e:
+            sentry.capture_exception(e)
             self.logger.error(f'Failed to get LastFM data from {url}, error: {e}')
         return page
 

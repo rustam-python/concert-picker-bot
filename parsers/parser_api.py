@@ -5,6 +5,7 @@ import database
 import getters
 import logger
 import schemas
+import sentry
 from getters.getter_place_details import PlaceDetails
 
 
@@ -50,6 +51,7 @@ class ParserApi:
                         database.EventDates.add(event_id=event.id, date_start=date.start, date_stop=date.end)
                 result = True
         except Exception as e:
+            sentry.capture_exception(e)
             self.logger.critical(f'Error occurred during APIs parsing: {e}', stack_info=True)
             database.Log.add(datetime.datetime.now(), f'Error occurred during APIs parsing: {e}', 'critical')
         return result
