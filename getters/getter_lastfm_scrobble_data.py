@@ -99,8 +99,8 @@ class LastFMScrobbleDataGetter:
         error_msg = ''
         try:
             error_msg = response.json()
-        except Exception:
-            self.logger.failure('Failure on attempt to extract error data from response')
+        except Exception as e:
+            self.logger.failure(f'Failure on attempt to extract error data from response: {e}', stack_info=True)
         else:
             error_msg = f'Response error message: {error_msg}'
         return error_msg

@@ -52,7 +52,7 @@ class ParserApi:
                 result = True
         except Exception as e:
             sentry.capture_exception(e)
-            self.logger.critical(f'Error occurred during APIs parsing: {e}', stack_info=True)
+            self.logger.failure(f'Error occurred during APIs parsing: {e}', stack_info=True)
             database.Log.add(datetime.datetime.now(), f'Error occurred during APIs parsing: {e}', 'critical')
         return result
 

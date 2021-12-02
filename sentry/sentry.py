@@ -29,7 +29,7 @@ def initialize_sentry(integrations: typing.Optional[list[Integration]] = None) -
         )
 
     except Exception as e:
-        _logger.critical(f'Sentry is failed to initialize: {e}', stack_info=True)
+        _logger.failure(f'Sentry is failed to initialize: {e}', stack_info=True)
 
 
 def capture_exception(*args, **kwargs):
