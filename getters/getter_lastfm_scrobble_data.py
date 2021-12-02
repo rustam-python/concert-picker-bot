@@ -45,9 +45,8 @@ class LastFMScrobbleDataGetter:
         try:
             self.logger.info('Getting data')
             start = time.time()
-            pages = self._get_scrobbles()
             self.logger.info('Start DB update...')
-            for page in pages:
+            for page in self._get_pages():
                 for scrobble in page.scrobbles:
                     cache.Caching.get_scrobble_id(
                         track=scrobble.track,
@@ -60,18 +59,15 @@ class LastFMScrobbleDataGetter:
             sentry.capture_exception(e)
             self.logger.error(f'Error during getting data: {e}', stack_info=True)
 
-    def _get_scrobbles(self) -> list[Page]:
+    def _get_pages(self) -> list[Page]:
         self.logger.info('Getting scrobbles from LastFM started.')
         max_page_number = self._get_total_pages_count()
-
         results = loop.run_until_complete(self._make_requests(range(1, max_page_number + 1)))
         if self._pages_for_retry:
             count = 5
             while count > 0:
                 self.logger.info(f'Trying to reload failed pages. {count} tries left.')
-                results += loop.run_until_complete(
-                    self._make_requests(self._pages_for_retry)
-                )
+                results += loop.run_until_complete(self._make_requests(self._pages_for_retry))
                 count -= 1
         if self._pages_for_retry:
             self.logger.error('There are still not get pages!')
@@ -85,8 +81,29 @@ class LastFMScrobbleDataGetter:
         response = requests.get(
             f'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=200&user={settings.APIs.lastfm_username}&api_key={settings.APIs.lastfm_token}&format=json'  # noqa: E501
         )
+        if not response.ok:
+            error_msg = self._get_response_error_message(response)
+            sentry.capture_exception(error_msg)
+            self.logger.failure(error_msg)
+            raise RuntimeError(error_msg)
         data = schemas.ScrobbleData(**response.json())
         return int(data.recenttracks.attr.totalPages)
+
+    def _get_response_error_message(self, response: requests.models.Response) -> str:
+        """
+        Tries to extract error message from Redfish
+        service HTTP response and write it to log
+        :param response: response where error message should be extracted from
+        :return: nothing
+        """
+        error_msg = ''
+        try:
+            error_msg = response.json()
+        except Exception:
+            self.logger.failure('Failure on attempt to extract error data from response')
+        else:
+            error_msg = f'Response error message: {error_msg}'
+        return error_msg
 
     async def _make_requests(self, pages_numbers: collections.abc.Iterable):
         async with aiohttp.ClientSession() as session:
@@ -134,8 +151,8 @@ class LastFMScrobbleDataGetter:
 
     async def _send_request(self, url: str, session: aiohttp.ClientSession):
         response = await session.request(method="GET", url=url)
-        if not response.status == 200:
+        if not response.ok:
             error = await response.json()
             self.logger.error(f'Error: {error}')
-            raise RuntimeError
+            raise RuntimeError(error)
         return await response.json()
