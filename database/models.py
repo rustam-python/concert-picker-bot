@@ -176,7 +176,7 @@ class LogLevel(_DictionaryModel):
     pass
 
 
-class Scrobble(BaseModel):
+class Scrobbles(BaseModel):
     migration_priority = 1
 
     id = AutoField()
@@ -186,7 +186,7 @@ class Scrobble(BaseModel):
     scrobble_date = DateTimeField(unique=True)
 
     @classmethod
-    def add(cls, artist: str, album: str, track: str, scrobble_date: datetime.datetime) -> 'Scrobble':
+    def add(cls, artist: str, album: str, track: str, scrobble_date: datetime.datetime) -> 'Scrobbles':
         try:
             return cls.get(cls.scrobble_date == scrobble_date)
         except cls.DoesNotExist:
