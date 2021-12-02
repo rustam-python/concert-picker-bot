@@ -44,14 +44,14 @@ class Bot:
                     select(
                         database.Events.event_id,
                         database.Events.title,
-                        database.Place.title.alias('place_name'),
-                        database.Place.address.alias('place_address'),
+                        database.Places.title.alias('place_name'),
+                        database.Places.address.alias('place_address'),
                         database.EventDates.date_start,
                         database.EventDates.date_stop,
                         database.Events.price,
                         database.Events.updated
                     ).
-                    join(database.Place).switch(database.Events).
+                    join(database.Places).switch(database.Events).
                     join(database.EventDates, join_type=peewee.JOIN.LEFT_OUTER).
                     where(database.Events.is_sent != True).
                     dicts().

@@ -36,7 +36,7 @@ class ParserApi:
 
                 self.logger.info('Add places to DB')
                 for place in places:
-                    database.Place.add(place_id=place.id, address=place.address, title=place.title)
+                    database.Places.add(place_id=place.id, address=place.address, title=place.title)
 
                 self.logger.info('Add events to DB')
                 for event in events:

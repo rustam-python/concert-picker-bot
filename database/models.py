@@ -18,7 +18,7 @@ server_db = PostgresqlDatabase(database='', autorollback=True)
 db = Proxy()
 
 
-def initialize_data_base(is_local: bool = True):
+def initialize_data_base(is_local: bool = True) -> Proxy:
     if not is_local:
         server_db.init(
             database=settings.DataBase.name,
@@ -71,7 +71,7 @@ class BaseModel(Model):
         return highest_priority
 
 
-class Place(BaseModel):
+class Places(BaseModel):
     migration_priority = 0
 
     place_id = IntegerField(primary_key=True, index_type=True)
@@ -79,7 +79,7 @@ class Place(BaseModel):
     title = CharField()
 
     @classmethod
-    def add(cls, place_id: int, address: str, title: str) -> 'EventDates':
+    def add(cls, place_id: int, address: str, title: str) -> 'Places':
         try:
             return cls.get(cls.place_id == place_id)
         except cls.DoesNotExist:
@@ -97,7 +97,7 @@ class Events(BaseModel):
     event_id = IntegerField(primary_key=True)
     title = CharField()
     slug = CharField()
-    place_id = ForeignKeyField(Place, null=True)
+    place_id = ForeignKeyField(Places, null=True)
     price = CharField(null=True)
     is_sent = BooleanField(default=False)
     updated = BooleanField(default=False)
@@ -117,7 +117,7 @@ class Events(BaseModel):
                 event_id=event_id,
                 title=title,
                 slug=slug,
-                place_id=Place.get(place_id=place_id),
+                place_id=Places.get(place_id=place_id),
                 price=price
             )
             return new
