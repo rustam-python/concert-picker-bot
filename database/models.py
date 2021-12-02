@@ -160,15 +160,15 @@ class _DictionaryModel(BaseModel):
         return cls.get_or_create(name=name)[0]
 
 
-class Artist(_DictionaryModel):
+class Artists(_DictionaryModel):
     pass
 
 
-class Album(_DictionaryModel):
+class Albums(_DictionaryModel):
     pass
 
 
-class Track(_DictionaryModel):
+class Tracks(_DictionaryModel):
     pass
 
 
@@ -180,9 +180,9 @@ class Scrobble(BaseModel):
     migration_priority = 1
 
     id = AutoField()
-    artist = ForeignKeyField(Artist)
-    album = ForeignKeyField(Album)
-    track = ForeignKeyField(Track)
+    artist = ForeignKeyField(Artists)
+    album = ForeignKeyField(Albums)
+    track = ForeignKeyField(Tracks)
     scrobble_date = DateTimeField(unique=True)
 
     @classmethod

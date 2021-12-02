@@ -8,17 +8,17 @@ class Caching:
     @staticmethod
     @cache.redis_cache()
     def get_artist_id(name: str) -> int:
-        return database.Artist.add(name=name).id
+        return database.Artists.add(name=name).id
 
     @staticmethod
     @cache.redis_cache()
     def get_album_id(name: str) -> int:
-        return database.Album.add(name=name).id
+        return database.Albums.add(name=name).id
 
     @staticmethod
     @cache.redis_cache()
     def get_track_id(name: str) -> int:
-        return database.Track.add(name=name).id
+        return database.Tracks.add(name=name).id
 
     @staticmethod
     @cache.redis_cache()

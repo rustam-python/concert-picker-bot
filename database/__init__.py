@@ -1,7 +1,7 @@
 __all__ = [
-    'Artist',
-    'Album',
-    'Track',
+    'Artists',
+    'Albums',
+    'Tracks',
     'Scrobble',
     'EventDates',
     'Events',
@@ -10,12 +10,12 @@ __all__ = [
     'initialize_data_base'
 ]
 
-from .models import Album
-from .models import Artist
+from .models import Albums
+from .models import Artists
 from .models import EventDates
 from .models import Events
 from .models import Log
 from .models import Place
 from .models import Scrobble
-from .models import Track
+from .models import Tracks
 from .models import initialize_data_base
