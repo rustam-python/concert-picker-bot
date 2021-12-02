@@ -12,6 +12,7 @@ import cache
 import logger
 import sentry
 import settings
+import schemas
 
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
@@ -77,16 +78,15 @@ class LastFMScrobbleDataGetter:
         self.logger.success('Getting info finished!')
         return [result for result in results if result is not None]
 
-    @staticmethod
-    def _get_total_pages_count():
+    def _get_total_pages_count(self):
         """
         This function gets total scrobbles pages count for downloading.
         """
-        r = requests.get(
+        response = requests.get(
             f'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=200&user={settings.APIs.lastfm_username}&api_key={settings.APIs.lastfm_token}&format=json'  # noqa: E501
         )
-        _json = r.json()
-        return int(_json['recenttracks']['@attr']['totalPages'])
+        data = schemas.ScrobbleData(**response.json())
+        return int(data.recenttracks.attr.totalPages)
 
     async def _make_requests(self, pages_numbers: collections.abc.Iterable):
         async with aiohttp.ClientSession() as session:
@@ -109,22 +109,21 @@ class LastFMScrobbleDataGetter:
         page = None
         url = f'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=200&page={number}&user={settings.APIs.lastfm_username}&api_key={settings.APIs.lastfm_token}&format=json'  # noqa: E501
         try:
-            result = await self._send_request(url=url, session=session)
-            scrobbles = result['recenttracks']['track']
+            data = await self._send_request(url=url, session=session)
+            scrobbles = schemas.ScrobbleData(**data)
             _page = Page(number)
-            for scrobble in scrobbles:
-                if scrobble.get('@attr'):
-                    if scrobble['@attr']['nowplaying'] == 'true':  # if track is playing now it has no scrobble date yet
-                        continue
+            for scrobble in scrobbles.recenttracks.tracks:
+                if scrobble.nowplaying:  # If track is playing now it has no scrobble date yet.
+                    continue
                 _page.scrobbles.append(
                     Scrobble(
-                        album=scrobble['album']['#text'],
-                        album_mbid=scrobble['album']['mbid'],
-                        artist=scrobble['artist']['#text'],
-                        artist_mbid=scrobble['artist']['mbid'],
-                        date=datetime.datetime.utcfromtimestamp(int(scrobble['date']['uts'])),
-                        track=scrobble['name'],
-                        track_mbid=scrobble['mbid']
+                        album=scrobble.album.text,
+                        album_mbid=scrobble.album.mbid,
+                        artist=scrobble.artist.text,
+                        artist_mbid=scrobble.artist.mbid,
+                        date=datetime.datetime.utcfromtimestamp(int(scrobble.date.uts)),
+                        track=scrobble.name,
+                        track_mbid=scrobble.mbid
                     )
                 )
             page = _page
