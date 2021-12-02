@@ -2,9 +2,8 @@ import os
 
 from configorm import IntegerField, StringField, Section, IniConnector
 
-connection_string = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'cpb-config.ini')
 
-connector = IniConnector(connection_string=connection_string)
+connector = IniConnector(connection_string=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'cpb-config.ini'))
 
 
 def check_config_integrity():

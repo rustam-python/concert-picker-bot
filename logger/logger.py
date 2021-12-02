@@ -2,6 +2,7 @@ import logging
 import sys
 
 SUCCESS = 25
+FAILURE = logging.CRITICAL
 
 
 class CustomFormatter(logging.Formatter):
@@ -44,6 +45,7 @@ class CustomLogger(logging.Logger):
         self._primary_handler.setFormatter(CustomFormatter())
         self.addHandler(self._primary_handler)
         logging.addLevelName(SUCCESS, 'SUCCESS')
+        logging.addLevelName(FAILURE, 'FAILURE')
 
     def progress_bar(self,
                      iteration: int,
@@ -91,6 +93,13 @@ class CustomLogger(logging.Logger):
         """
         if self.isEnabledFor(SUCCESS):
             self._log(SUCCESS, msg, args, **kwargs)
+
+    def failure(self, msg, *args, **kwargs):
+        """
+        Log 'msg % args' with severity 'FAILURE'.
+        """
+        if self.isEnabledFor(FAILURE):
+            self._log(FAILURE, msg, args, **kwargs)
 
     def direct(self, msg: str) -> None:
         """
