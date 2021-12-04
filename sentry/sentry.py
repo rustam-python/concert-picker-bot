@@ -1,10 +1,8 @@
-import logging
 import typing
 
 import sentry_sdk
 import sentry_sdk.utils
 from sentry_sdk.integrations import Integration
-from sentry_sdk.integrations.logging import LoggingIntegration
 
 import logger
 import settings
