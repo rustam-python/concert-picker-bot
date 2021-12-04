@@ -13,6 +13,7 @@ import logger
 import sentry
 import settings
 import schemas
+from getters.errors import LastFMServerResponseError
 
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
@@ -148,7 +149,7 @@ class LastFMScrobbleDataGetter:
             page = _page
         except Exception as e:
             sentry.capture_exception(e)
-            self.logger.error(f'Failed to get LastFM data from {url}, error: {e}')
+            self.logger.error(f'Failed to get LastFM data from {url}, error: {e}', stack_info=True)
         return page
 
     async def _send_request(self, url: str, session: aiohttp.ClientSession):
@@ -156,5 +157,5 @@ class LastFMScrobbleDataGetter:
         if not response.ok:
             error = await response.json()
             self.logger.error(f'Error: {error}')
-            raise RuntimeError(error)
+            raise LastFMServerResponseError(error)
         return await response.json()

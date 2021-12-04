@@ -4,3 +4,11 @@ class LastFMError(Exception):
 
 class KudagoError(Exception):
     pass
+
+
+class LastFMServerResponseError(Exception):
+    pass
+
+
+class KudagoServerResponseError(Exception):
+    pass
