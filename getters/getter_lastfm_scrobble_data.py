@@ -84,9 +84,7 @@ class LastFMScrobbleDataGetter:
         )
         if not response.ok:
             error_msg = self._get_response_error_message(response)
-            sentry.capture_exception(error_msg)
-            self.logger.failure(error_msg)
-            raise RuntimeError(error_msg)
+            raise LastFMServerResponseError(error_msg)
         data = schemas.ScrobbleData(**response.json())
         return int(data.recenttracks.attr.totalPages)
 
