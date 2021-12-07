@@ -110,44 +110,40 @@ class LastFMScrobbleDataGetter:
         async with aiohttp.ClientSession(connector=connector) as session:
             tasks = []
             for page_number in pages_numbers:
+                url = f'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=200&page={page_number}&user={settings.APIs.lastfm_username}&api_key={settings.APIs.lastfm_token}&format=json'  # noqa: E501
                 try:
-                    tasks.append(self._get_page_data(number=page_number, session=session))
+                    tasks.append(self._get_page_data(url=url, number=page_number, session=session))
                     if page_number in self._pages_for_retry:
                         self._pages_for_retry.remove(page_number)
-                except RuntimeError:
+                except Exception as e:
+                    sentry.capture_exception(e)
+                    self.logger.error(f'Failed to get LastFM data from {url}, error: {e}', stack_info=True)
                     if page_number not in self._pages_for_retry:
                         self._pages_for_retry.append(page_number)
             result = await asyncio.gather(*tasks)
         return result
 
-    async def _get_page_data(self, number: int, session: aiohttp.ClientSession) -> typing.Optional[Page]:
+    async def _get_page_data(self, url: str, number: int, session: aiohttp.ClientSession) -> Page:
         """
         This function gets data from single page.
         """
-        page = None
-        url = f'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=200&page={number}&user={settings.APIs.lastfm_username}&api_key={settings.APIs.lastfm_token}&format=json'  # noqa: E501
-        try:
-            data = await self._send_request(url=url, session=session)
-            scrobbles = schemas.ScrobbleData(**data)
-            _page = Page(number)
-            for scrobble in scrobbles.recenttracks.tracks:
-                if scrobble.nowplaying:  # If track is playing now it has no scrobble date yet.
-                    continue
-                _page.scrobbles.append(
-                    Scrobble(
-                        album=scrobble.album.text,
-                        album_mbid=scrobble.album.mbid,
-                        artist=scrobble.artist.text,
-                        artist_mbid=scrobble.artist.mbid,
-                        date=datetime.datetime.utcfromtimestamp(int(scrobble.date.uts)),
-                        track=scrobble.name,
-                        track_mbid=scrobble.mbid
-                    )
+        data = await self._send_request(url=url, session=session)
+        scrobbles = schemas.ScrobbleData(**data)
+        page = Page(number)
+        for scrobble in scrobbles.recenttracks.tracks:
+            if scrobble.nowplaying:  # If track is playing now it has no scrobble date yet.
+                continue
+            page.scrobbles.append(
+                Scrobble(
+                    album=scrobble.album.text,
+                    album_mbid=scrobble.album.mbid,
+                    artist=scrobble.artist.text,
+                    artist_mbid=scrobble.artist.mbid,
+                    date=datetime.datetime.utcfromtimestamp(int(scrobble.date.uts)),
+                    track=scrobble.name,
+                    track_mbid=scrobble.mbid
                 )
-            page = _page
-        except Exception as e:
-            sentry.capture_exception(e)
-            self.logger.error(f'Failed to get LastFM data from {url}, error: {e}', stack_info=True)
+            )
         return page
 
     async def _send_request(self, url: str, session: aiohttp.ClientSession):
