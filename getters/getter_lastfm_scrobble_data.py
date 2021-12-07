@@ -106,7 +106,7 @@ class LastFMScrobbleDataGetter:
 
     async def _make_requests(self, pages_numbers: collections.abc.Iterable):
         # Limit the number of connections to 10.
-        connector = aiohttp.TCPConnector(limit=10)
+        connector = aiohttp.TCPConnector(limit=5)
         async with aiohttp.ClientSession(connector=connector) as session:
             tasks = []
             for page_number in pages_numbers:
