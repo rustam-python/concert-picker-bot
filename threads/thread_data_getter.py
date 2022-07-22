@@ -11,8 +11,6 @@ class LastFMScrobbleDataThread(threading.Thread):
         self.logger = logger.Logger(name=self.__class__.__name__)
         self.timeout = timeout
 
-        self.daemon = False
-
         self._is_running = threading.Event()
         self._stop_event = threading.Event()
 
@@ -20,8 +18,10 @@ class LastFMScrobbleDataThread(threading.Thread):
 
         super(LastFMScrobbleDataThread, self).__init__()
 
+        self.daemon = False
+        self.name = self.__class__.__name__
+
     def run(self) -> None:
-        getters.LastFMScrobbleDataGetter().get_scrobbles()
         while not self._stop_event.is_set():
             start_time = datetime.datetime.now()
             if self._is_running.is_set():
