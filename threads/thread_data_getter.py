@@ -11,14 +11,15 @@ class LastFMScrobbleDataThread(threading.Thread):
         self.logger = logger.Logger(name=self.__class__.__name__)
         self.timeout = timeout
 
-        self.daemon = False
-
         self._is_running = threading.Event()
         self._stop_event = threading.Event()
 
         self._is_running.set()
 
         super(LastFMScrobbleDataThread, self).__init__()
+
+        self.daemon = False
+        self.name = self.__class__.__name__
 
     def run(self) -> None:
         getters.LastFMScrobbleDataGetter().get_scrobbles()
