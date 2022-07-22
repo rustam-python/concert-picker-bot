@@ -1,3 +1,4 @@
+import threading
 import typing
 
 import settings
@@ -7,6 +8,12 @@ import threads
 class ThreadHolder:
     _lastfm_data_thread: typing.Optional[threads.LastFMScrobbleDataThread] = None
     _bot_thread: typing.Optional[threads.BotThread] = None
+
+    @classmethod
+    def start_threads(cls) -> None:
+        """Stat all necessary threads."""
+        for thread in (cls.get_lastfm_data_thread(), cls.get_bot_thread()):
+            thread.join()
 
     @classmethod
     def stop_threads(cls) -> None:
