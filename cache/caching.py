@@ -24,5 +24,3 @@ class Caching:
     @cache.redis_cache()
     def get_scrobble_id(artist: str, album: str, track: str, scrobble_date: datetime.datetime) -> int:
         return database.Scrobbles.add(artist=artist, album=album, track=track, scrobble_date=scrobble_date).id
-
-

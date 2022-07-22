@@ -44,7 +44,7 @@ class LastFMScrobbleDataGetter:
 
     def get_scrobbles(self):
         try:
-            self.logger.info('Getting data')
+            self.logger.info('Getting data...')
             start = time.time()
             self.logger.info('Start DB update...')
             for page in self._get_pages():
@@ -61,7 +61,7 @@ class LastFMScrobbleDataGetter:
             self.logger.error(f'Error during getting data: {e}', stack_info=True)
 
     def _get_pages(self) -> list[Page]:
-        self.logger.info('Getting scrobbles from LastFM started.')
+        self.logger.info('Getting scrobbles from LastFM...')
         max_page_number = self._get_total_pages_count()
         results = loop.run_until_complete(self._make_requests(range(1, max_page_number + 1)))
         if self._pages_for_retry:

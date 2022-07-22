@@ -25,13 +25,17 @@ class ThreadHolder:
     @classmethod
     def get_lastfm_data_thread(cls) -> threads.LastFMScrobbleDataThread:
         if cls._lastfm_data_thread is None:
-            cls._lastfm_data_thread = threads.LastFMScrobbleDataThread(settings.App.data_getter_timeout)
+            cls._lastfm_data_thread = threads.LastFMScrobbleDataThread(timeout=settings.App.data_getter_timeout)
             cls._lastfm_data_thread.start()
+            [print(thread.name) for thread in threading.enumerate()]
+            print(threading.active_count())
         return cls._lastfm_data_thread
 
     @classmethod
     def get_bot_thread(cls) -> threads.BotThread:
         if cls._bot_thread is None:
-            cls._bot_thread = threads.BotThread(settings.App.bot_request_timeout)
+            cls._bot_thread = threads.BotThread(timeout=settings.App.bot_request_timeout)
             cls._bot_thread.start()
+            [print(thread.name) for thread in threading.enumerate()]
+            print(threading.active_count())
         return cls._bot_thread
