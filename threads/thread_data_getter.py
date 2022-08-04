@@ -27,7 +27,10 @@ class LastFMScrobbleDataThread(threading.Thread):
             if self._is_running.is_set():
                 while (datetime.datetime.now() - start_time).seconds < (self.timeout + 1):
                     time.sleep(2)
-                getters.LastFMScrobbleDataGetter().get_scrobbles()
+                try:
+                    getters.LastFMScrobbleDataGetter().get_scrobbles()
+                except RuntimeError as e:
+                    self.logger.warning(e, exc_info=True)
 
     def pause(self) -> None:
         self._is_running.clear()

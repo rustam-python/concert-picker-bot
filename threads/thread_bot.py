@@ -27,7 +27,10 @@ class BotThread(threading.Thread):
             if self._is_running.is_set():
                 while (datetime.datetime.now() - start_time).seconds < (self.timeout + 1):
                     time.sleep(2)
-                bot.Bot().start()
+                try:
+                    bot.Bot().start()
+                except RuntimeError as e:
+                    self.logger.warning(e, exc_info=True)
 
     def pause(self) -> None:
         self._is_running.clear()
