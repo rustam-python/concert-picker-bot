@@ -35,6 +35,7 @@ class Bot:
             events = self._get_events()
             if events:
                 self._send_messages(bot=bot, events=events)
+        bot.stop_bot()
 
     def _get_events(self) -> typing.Optional[list[_Event]]:
         result = None

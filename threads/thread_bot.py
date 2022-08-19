@@ -31,6 +31,7 @@ class BotThread(threading.Thread):
                     bot.Bot().start()
                 except RuntimeError as e:
                     self.logger.warning(e, exc_info=True)
+                    print(f'Threads count – {threading.active_count()}')
 
     def pause(self) -> None:
         self._is_running.clear()
