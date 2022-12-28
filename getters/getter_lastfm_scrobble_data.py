@@ -3,16 +3,15 @@ import collections.abc
 import dataclasses
 import datetime
 import time
-import typing
 
 import aiohttp
 import requests
 
 import cache
 import logger
+import schemas
 import sentry
 import settings
-import schemas
 from getters.errors import LastFMServerResponseError
 
 loop = asyncio.new_event_loop()
