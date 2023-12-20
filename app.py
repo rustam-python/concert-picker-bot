@@ -1,4 +1,4 @@
-import database
+import database as db
 import logger
 import sentry
 import settings
@@ -10,6 +10,6 @@ _logger = logger.Logger(name='App')
 _logger.info('App initialization started...')
 
 sentry.initialize_sentry(integrations=[RedisIntegration()])
-database.initialize_data_base(is_local=False)
+db.initialize_data_base(is_local=False)
 settings.check_config_integrity()
 threads.ThreadHolder.start_threads()

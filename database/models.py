@@ -147,9 +147,8 @@ D = typing.TypeVar('D', bound='_DictionaryModel')
 
 
 class _DictionaryModel(BaseModel):
-    """
-    Base class for models that describe DB dictionary tables
-    """
+    """Base class for models that describe Database dictionary tables."""
+
     migration_priority = 0
 
     id = AutoField()

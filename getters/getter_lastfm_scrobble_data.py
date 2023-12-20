@@ -75,9 +75,7 @@ class LastFMScrobbleDataGetter:
         return [result for result in results if result is not None]
 
     def _get_total_pages_count(self):
-        """
-        This function gets total scrobbles pages count for downloading.
-        """
+        """Gets the total number of pages to download with scrobbling from the first page of the scrobbling request."""
         response = requests.get(
             f'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=200&user={settings.APIs.lastfm_username}&api_key={settings.APIs.lastfm_token}&format=json'  # noqa: E501
         )
@@ -88,12 +86,6 @@ class LastFMScrobbleDataGetter:
         return int(data.recenttracks.attr.totalPages)
 
     def _get_response_error_message(self, response: requests.models.Response) -> str:
-        """
-        Tries to extract error message from Redfish
-        service HTTP response and write it to log
-        :param response: response where error message should be extracted from
-        :return: nothing
-        """
         error_msg = ''
         try:
             error_msg = response.json()

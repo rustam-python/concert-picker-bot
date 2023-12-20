@@ -53,7 +53,7 @@ class _Image(pydantic.BaseModel):
 
 class _Artist(pydantic.BaseModel):
     _attr: _ArtistsAttr
-    image: typing.Annotated[list, pydantic.conlist(_Image, min_items=5, max_items=5)]
+    image: typing.Annotated[list, pydantic.conlist(_Image, min_length=5, max_length=5)]
     mbid: str
     name: str
     playcount: str

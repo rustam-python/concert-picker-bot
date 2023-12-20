@@ -3,7 +3,7 @@ Unit tests for "getters.getter_lastfm_scrobble_data.LastFMScrobbleDataGetter" cl
 """
 
 import unittest
-from unittest.mock import Mock, patch, call, MagicMock
+from unittest.mock import Mock, patch, MagicMock
 
 from getters import LastFMScrobbleDataGetter
 
@@ -83,7 +83,7 @@ class TestGetScrobbles(TestLastFMScrobbleDataGetter):
 
 class TestGetPages(TestLastFMScrobbleDataGetter):
     """
-    Unit tests for "_ProtoWorkerBMCUpdater.get_scrobbles" method
+    Unit tests for "_ProtoWorkerBMCUpdater.get_scrobbles" method.
     """
 
     def test__get_pages_is_ok(self,):
@@ -98,5 +98,3 @@ class TestGetPages(TestLastFMScrobbleDataGetter):
         self.getter.get_scrobbles()
 
         # Assertions
-
-

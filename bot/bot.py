@@ -6,7 +6,7 @@ import pydantic
 import pytz
 import telebot
 
-import database
+import database as db
 import logger
 import parsers
 import settings
@@ -41,28 +41,28 @@ class Bot:
         result = None
         try:
             query = (
-                database.Events.
-                    select(
-                        database.Events.event_id,
-                        database.Events.title,
-                        database.Places.title.alias('place_name'),
-                        database.Places.address.alias('place_address'),
-                        database.EventDates.date_start,
-                        database.EventDates.date_stop,
-                        database.Events.price,
-                        database.Events.updated
-                    ).
-                    join(database.Places).switch(database.Events).
-                    join(database.EventDates, join_type=peewee.JOIN.LEFT_OUTER).
-                    where(database.Events.is_sent != True).
-                    dicts().
-                    execute()
+                db.Events.
+                select(
+                    db.Events.event_id,
+                    db.Events.title,
+                    db.Places.title.alias('place_name'),
+                    db.Places.address.alias('place_address'),
+                    db.EventDates.date_start,
+                    db.EventDates.date_stop,
+                    db.Events.price,
+                    db.Events.updated
+                ).
+                join(db.Places).switch(db.Events).
+                join(db.EventDates, join_type=peewee.JOIN.LEFT_OUTER).
+                where(db.Events.is_sent != True).
+                dicts().
+                execute()
             )
             events = [event for event in query]
             result = [_Event(**data) for data in events]
         except Exception:
             self.logger.failure('Error occurred during events DB request', stack_info=True)
-            database.Log.add(datetime.datetime.now(), 'Error occurred during events DB request', 'critical')
+            db.Log.add(datetime.datetime.now(), 'Error occurred during events DB request', 'critical')
         return result
 
     def _send_messages(self, bot: telebot.TeleBot, events: list[_Event]):
@@ -86,9 +86,9 @@ class Bot:
                 self.logger.success('Message was successfully sent')
             except Exception:
                 self.logger.failure('Error occurred during message sending', stack_info=True)
-                database.Log.add(datetime.datetime.now(), 'Error occurred during message sending', 'critical')
+                db.Log.add(datetime.datetime.now(), 'Error occurred during message sending', 'critical')
         try:
-            database.Events.update(is_sent=True).where(database.Events.event_id.in_(sent_ids)).execute()
+            db.Events.update(is_sent=True).where(db.Events.event_id.in_(sent_ids)).execute()
         except Exception:
             self.logger.failure('Error occurred during marking events as sent', stack_info=True)
-            database.Log.add(datetime.datetime.now(), 'Error occurred during marking events as sent', 'critical')
+            db.Log.add(datetime.datetime.now(), 'Error occurred during marking events as sent', 'critical')

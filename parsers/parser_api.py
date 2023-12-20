@@ -1,7 +1,6 @@
 import datetime
-import typing
 
-import database
+import database as db
 import getters
 import logger
 import schemas
@@ -24,7 +23,7 @@ class ParserApi:
     def _exec_scan(self) -> bool:
         result = False
         try:
-            events: typing.Optional[list[schemas.Event]] = getters.GetterEvents().get_data()
+            events: list[schemas.Event] | None = getters.GetterEvents().get_data()
             if events:
                 places_ids = list({event.place.id for event in events if event.place})
                 places: list[PlaceDetails] = getters.GetterPlaceDetails(places_ids).get_data()
@@ -36,11 +35,11 @@ class ParserApi:
 
                 self.logger.info('Add places to DB')
                 for place in places:
-                    database.Places.add(place_id=place.id, address=place.address, title=place.title)
+                    db.Places.add(place_id=place.id, address=place.address, title=place.title)
 
                 self.logger.info('Add events to DB')
                 for event in events:
-                    database.Events.add(
+                    db.Events.add(
                         event_id=event.id,
                         title=event.title,
                         slug=event.slug,
@@ -48,12 +47,12 @@ class ParserApi:
                         price=event.price
                     )
                     for date in event.dates:
-                        database.EventDates.add(event_id=event.id, date_start=date.start, date_stop=date.end)
+                        db.EventDates.add(event_id=event.id, date_start=date.start, date_stop=date.end)
                 result = True
         except Exception as e:
             sentry.capture_exception(e)
             self.logger.failure(f'Error occurred during APIs parsing: {e}', stack_info=True)
-            database.Log.add(datetime.datetime.now(), f'Error occurred during APIs parsing: {e}', 'critical')
+            db.Log.add(datetime.datetime.now(), f'Error occurred during APIs parsing: {e}', 'critical')
         return result
 
     @staticmethod

@@ -57,7 +57,8 @@ class CustomLogger(logging.Logger):
                      length: int = 80,
                      *args, **kwargs) -> None:
         """
-        Call in a loop to create terminal progress bar
+        Call in a loop to create terminal progress bar.
+
         @params:
             iteration   - Required  : current iteration (Int)
             total       - Required  : total iterations (Int)
@@ -95,9 +96,7 @@ class CustomLogger(logging.Logger):
             self._log(SUCCESS, msg, args, **kwargs)
 
     def failure(self, msg, *args, **kwargs):
-        """
-        Log 'msg % args' with severity 'FAILURE'.
-        """
+        """Log 'msg % args' with severity 'FAILURE'."""
         if self.isEnabledFor(FAILURE):
             self._log(FAILURE, msg, args, **kwargs)
 

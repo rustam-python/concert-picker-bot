@@ -1,5 +1,3 @@
-import typing
-
 import sentry_sdk
 import sentry_sdk.utils
 from sentry_sdk.integrations import Integration
@@ -11,7 +9,7 @@ sentry_sdk.utils.MAX_STRING_LENGTH = 10000
 
 
 # noinspection PyBroadException
-def initialize_sentry(integrations: typing.Optional[list[Integration]] = None) -> None:
+def initialize_sentry(integrations: list[Integration] | None = None) -> None:
     """Initialize Sentry SDK Integration."""
     # TODO Add release information
     release = '1.0.0'

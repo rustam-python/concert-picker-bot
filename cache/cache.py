@@ -30,5 +30,3 @@ def redis_cache(ttl: int = settings.Redis.ttl):
         return wrapper
 
     return decorator
-
-
