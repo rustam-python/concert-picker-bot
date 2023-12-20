@@ -52,7 +52,7 @@ class GetterEvents(_ProtoGetter):
             message = f'Failed to get KudaGo data: {error}'
             self.logger.error(message)
             raise KudagoResponseError(message)
-        kudago = schemas.Events(**response.json())
+        kudago = schemas.EventsList(**response.json())
         if not kudago.next:
             return kudago.results
         counter += 1

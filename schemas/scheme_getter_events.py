@@ -22,7 +22,7 @@ class Event(pydantic.BaseModel):
     price: str
 
 
-class Events(pydantic.BaseModel):
+class EventsList(pydantic.BaseModel):
     count: int
     next: typing.Optional[str]
     previous: typing.Optional[str]
