@@ -17,9 +17,11 @@ class BaseSection(Section):
 
 class APIs(BaseSection):
     kudago_url = StringField(default='https://kudago.com/public-api/v1.4/events/?lang=&page_size=100&fields=id,dates,title,place,slug,price&expand=&order_by=&text_format=&ids=&location=msk&actual_since={}&actual_until=&is_free=&categories=concert')  # noqa: E501
-    lastfm_url = StringField(default='http://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user={}&period=overall&limit={}&api_key={}&format=json')  # noqa: E501
+    url_top_artists = StringField(default='http://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user={user}&period=overall&limit={}&api_key={api_key}&format=json')  # noqa: E501
+    url_recent_tracks = StringField(default='http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=200&user={user}&api_key={api_key}&format=json') # noqa: E501
+    url_recent_tracks_via_page = StringField(default='http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=200&page={page}&user={user}&api_key={api_key}&format=json')  # noqa: E501
     lastfm_username = StringField(null=True)
-    lastfm_token = StringField(null=True)
+    api_key = StringField(null=True)
     lastfm_artists_limit = IntegerField(default=300)
     telegram_token = StringField(null=True)
     telegram_chat_id = IntegerField(null=True)

@@ -67,10 +67,10 @@ class GetterEvents(_ProtoGetter):
         self.logger.info('Request LastFM API for scrobbled artists list')
         try:
             response = requests.get(
-                url=settings.APIs.lastfm_url.format(
+                url=settings.APIs.url_top_artists.format(
                     settings.APIs.lastfm_username,
                     settings.APIs.lastfm_artists_limit,
-                    settings.APIs.lastfm_token
+                    settings.APIs.api_key
                 ),
                 timeout=20
             )

@@ -77,7 +77,10 @@ class LastFMScrobbleDataGetter:
     def _get_total_pages_count(self):
         """Gets the total number of pages to download with scrobbling from the first page of the scrobbling request."""
         response = requests.get(
-            f'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=200&user={settings.APIs.lastfm_username}&api_key={settings.APIs.lastfm_token}&format=json'  # noqa: E501
+            settings.APIs.url_recent_tracks.format(
+                user=settings.APIs.lastfm_username,
+                api_key=settings.APIs.api_key
+            )
         )
         if not response.ok:
             error_msg = self._get_response_error_message(response)
@@ -101,7 +104,11 @@ class LastFMScrobbleDataGetter:
         async with aiohttp.ClientSession(connector=connector) as session:
             tasks = []
             for page_number in pages_numbers:
-                url = f'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=200&page={page_number}&user={settings.APIs.lastfm_username}&api_key={settings.APIs.lastfm_token}&format=json'  # noqa: E501
+                url = settings.APIs.url_recent_tracks_via_page.format(
+                    page=page_number,
+                    user=settings.APIs.lastfm_username,
+                    api_key=settings.APIs.api_key
+                )
                 try:
                     tasks.append(self._get_page_data(url=url, number=page_number, session=session))
                     if page_number in self._pages_for_retry:
