@@ -9,7 +9,7 @@ import logger
 import schemas
 import sentry
 import settings
-from getters.errors import LastFMServerResponseError, KudagoServerResponseError
+from getters.errors import LastFMResponseError, KudagoResponseError
 
 
 class _ProtoGetter:
@@ -51,7 +51,7 @@ class GetterEvents(_ProtoGetter):
             error = response.json().get('detail')
             message = f'Failed to get KudaGo data: {error}'
             self.logger.error(message)
-            raise KudagoServerResponseError(message)
+            raise KudagoResponseError(message)
         kudago = schemas.Events(**response.json())
         if not kudago.next:
             return kudago.results
@@ -80,7 +80,7 @@ class GetterEvents(_ProtoGetter):
         if not response.ok:
             error = response.json().get('message')
             message = f'Failed to get LastFM data: {error}'
-            raise LastFMServerResponseError(message)
+            raise LastFMResponseError(message)
         lastfm = schemas.Artists(**response.json())
         data = [artist.name for artist in lastfm.topartists.artist]
         return data

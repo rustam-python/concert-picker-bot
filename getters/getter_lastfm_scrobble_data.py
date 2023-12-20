@@ -12,7 +12,7 @@ import logger
 import schemas
 import sentry
 import settings
-from getters.errors import LastFMServerResponseError
+from getters.errors import LastFMResponseError
 
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
@@ -81,7 +81,7 @@ class LastFMScrobbleDataGetter:
         )
         if not response.ok:
             error_msg = self._get_response_error_message(response)
-            raise LastFMServerResponseError(error_msg)
+            raise LastFMResponseError(error_msg)
         data = schemas.ScrobbleData(**response.json())
         return int(data.recenttracks.attr.totalPages)
 
@@ -142,5 +142,5 @@ class LastFMScrobbleDataGetter:
         if not response.ok:
             error = await response.json()
             self.logger.error(f'Error: {error}')
-            raise LastFMServerResponseError(error)
+            raise LastFMResponseError(error)
         return await response.json()

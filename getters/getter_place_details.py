@@ -4,7 +4,7 @@ import time
 import aiohttp
 import pydantic
 
-from getters.errors import KudagoError
+from getters.errors import KudagoResponseError
 from getters.getter_events import _ProtoGetter
 
 
@@ -59,7 +59,7 @@ class GetterPlaceDetails(_ProtoGetter):
             result = await self._send_request(url=url, session=session)
             if place_id in self._ids_for_retry:
                 self._ids_for_retry.remove(place_id)
-        except KudagoError:
+        except KudagoResponseError:
             if place_id not in self._ids_for_retry:
                 self._ids_for_retry.append(place_id)
         except Exception:
@@ -73,5 +73,5 @@ class GetterPlaceDetails(_ProtoGetter):
         if not response.status == 200:
             error = await response.json()
             self.logger.error(f'Failed to get KudaGo data from {url}: {error.get("detail")}')
-            raise KudagoError
+            raise KudagoResponseError
         return await response.json()
