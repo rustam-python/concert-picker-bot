@@ -23,10 +23,10 @@ class ParserApi:
     def _exec_scan(self) -> bool:
         result = False
         try:
-            events: list[schemas.Event] | None = getters.GetterEvents().get_data()
+            events: list[schemas.Event] | None = getters.ConcertsGetter().get_data()
             if events:
                 places_ids = list({event.place.id for event in events if event.place})
-                places: list[PlaceDetails] = getters.GetterPlaceDetails(places_ids).get_data()
+                places: list[PlaceDetails] = getters.EventPlaceInfoGetter(places_ids).get_data()
 
                 self.logger.info('Filter events')
                 for event in events:

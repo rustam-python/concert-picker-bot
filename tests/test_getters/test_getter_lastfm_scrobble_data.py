@@ -5,7 +5,7 @@ Unit tests for "getters.getter_lastfm_scrobble_data.LastFMScrobbleDataGetter" cl
 import unittest
 from unittest.mock import Mock, patch, MagicMock
 
-from getters import LastFMScrobbleDataGetter
+from getters import GetterLastFMScrobbleDataAsync
 
 
 class TestLastFMScrobbleDataGetter(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestLastFMScrobbleDataGetter(unittest.TestCase):
         with patch('getters.getter_lastfm_scrobble_data.logger'), \
              patch('getters.getter_lastfm_scrobble_data.asyncio') as async_mock:
             self.async_mock = async_mock
-            self.getter = LastFMScrobbleDataGetter()
+            self.getter = GetterLastFMScrobbleDataAsync()
 
 
 class TestInit(TestLastFMScrobbleDataGetter):

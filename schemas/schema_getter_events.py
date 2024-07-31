@@ -21,6 +21,12 @@ class Event(pydantic.BaseModel):
     place: typing.Optional[_Place]
     price: str
 
+    def __str__(self):
+        return f'{self.title} {self.slug}'
+
+    def __repr__(self):
+        return f'{self.title} -- {self.slug} {[date.start.strftime('%Y.%m.%d') for date in self.dates]}'
+
 
 class EventsList(pydantic.BaseModel):
     count: int
@@ -71,7 +77,8 @@ class _TopArtists(pydantic.BaseModel):
     artist: list[_Artist]
 
     class Config:
-        fields = {
+
+        fields = {  # TODO UserWarning: Valid config keys have changed in V2: *'fields' has been removed
             '_attr': '@attr'
         }
 

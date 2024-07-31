@@ -15,7 +15,8 @@ class CustomFormatter(logging.Formatter):
     green = '\033[92m'
     bold_red = '\033[91m\033[1m'
     reset = '\033[0m'
-    custom_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
+    # custom_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
+    custom_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
     FORMATS = {
         logging.DEBUG: grey,

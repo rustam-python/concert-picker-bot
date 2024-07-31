@@ -11,7 +11,7 @@ class ThreadHolder:
     @classmethod
     def start_threads(cls) -> None:
         """Stat all necessary threads."""
-        for thread in (cls.get_lastfm_data_thread(), cls.get_bot_thread()):
+        for thread in (cls.get_lastfm_data_thread(), cls.get_bot_thread(), cls.get_scrobble_data_thread):
             thread.join()
 
     @classmethod
@@ -30,6 +30,13 @@ class ThreadHolder:
 
     @classmethod
     def get_bot_thread(cls) -> threads.BotThread:
+        if cls._bot_thread is None:
+            cls._bot_thread = threads.BotThread(timeout=settings.App.bot_request_timeout)
+            cls._bot_thread.start()
+        return cls._bot_thread
+
+    @classmethod
+    def get_scrobble_data_thread(cls) -> threads.BotThread:
         if cls._bot_thread is None:
             cls._bot_thread = threads.BotThread(timeout=settings.App.bot_request_timeout)
             cls._bot_thread.start()

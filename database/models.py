@@ -7,7 +7,7 @@ import typing
 
 from peewee import (
     CharField, Model, ForeignKeyField, IntegerField, Proxy, SqliteDatabase, BooleanField, DateTimeField, AutoField,
-    PostgresqlDatabase
+    PostgresqlDatabase, PrimaryKeyField
 )
 
 import cache
@@ -33,11 +33,11 @@ def initialize_data_base(is_local: bool = True) -> Proxy:
     else:
         db.initialize(local_db)
         print('Database initialised as local')
-    BaseModel.recreate_tables()
+    _BaseModel.recreate_tables()
     return db
 
 
-class BaseModel(Model):
+class _BaseModel(Model):
     class Meta:
         database = db
 
@@ -51,6 +51,7 @@ class BaseModel(Model):
                 if model.migration_priority == priority:
                     if model.__name__.lower() not in table_list and 'mixin' not in model.__name__.lower():
                         db.create_tables([model])
+                        model.check_default_fields()
                         print(f'Table {model.__name__} was not found in DB. New table was created to fix that.')
 
     @staticmethod
@@ -70,8 +71,25 @@ class BaseModel(Model):
                 highest_priority = model.migration_priority
         return highest_priority
 
+    @classmethod
+    def check_default_fields(cls) -> None:
+        """Add if necessary default fields."""
+        pass
 
-class Places(BaseModel):
+
+class ProcessedPages(_BaseModel):
+    migration_priority = 0
+
+    id = PrimaryKeyField(index=True)
+    last_processed_page = IntegerField()
+
+    @classmethod
+    def check_default_fields(cls) -> None:
+        """Add if necessary default fields."""
+        cls.get_or_create(last_processed_page=1)
+
+
+class Places(_BaseModel):
     migration_priority = 0
 
     place_id = IntegerField(primary_key=True, index_type=True)
@@ -91,7 +109,7 @@ class Places(BaseModel):
             return new
 
 
-class Events(BaseModel):
+class Events(_BaseModel):
     migration_priority = 1
 
     event_id = IntegerField(primary_key=True)
@@ -131,7 +149,7 @@ class Events(BaseModel):
         cls.update(is_sent=False).where(Events.event_id == cls.event_id).execute()
 
 
-class EventDates(BaseModel):
+class EventDates(_BaseModel):
     migration_priority = 2
 
     event_id = ForeignKeyField(Events)
@@ -146,7 +164,7 @@ class EventDates(BaseModel):
 D = typing.TypeVar('D', bound='_DictionaryModel')
 
 
-class _DictionaryModel(BaseModel):
+class _DictionaryModel(_BaseModel):
     """Base class for models that describe Database dictionary tables."""
 
     migration_priority = 0
@@ -175,7 +193,7 @@ class LogLevel(_DictionaryModel):
     pass
 
 
-class Scrobbles(BaseModel):
+class Scrobbles(_BaseModel):
     migration_priority = 1
 
     id = AutoField()
@@ -197,7 +215,7 @@ class Scrobbles(BaseModel):
             )
 
 
-class Log(BaseModel):
+class Log(_BaseModel):
     migration_priority = 1
 
     id = AutoField()

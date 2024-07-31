@@ -5,5 +5,5 @@ __all__ = [
     'ScrobbleData'
 ]
 
-from .scheme_getter_events import Artists, Event, EventsList
-from .scheme_getter_lastfm_scrobble_data import ScrobbleData
+from .schema_getter_events import Artists, Event, EventsList
+from .lastfm_data import ScrobbleData

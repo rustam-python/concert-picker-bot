@@ -28,7 +28,8 @@ class LastFMScrobbleDataThread(threading.Thread):
                 while (datetime.datetime.now() - start_time).seconds < (self.timeout + 1):
                     time.sleep(2)
                 try:
-                    getters.LastFMScrobbleDataGetter().get_scrobbles()
+                    # getters.LastFMScrobbleDataGetter().get_scrobbles()  # Включает новый асинхронный парсинг.
+                    getters.ConcertsGetter().get_data()  # Включает старый синхронный парсинг артистов и концертов.
                 except RuntimeError as e:
                     self.logger.warning(e, exc_info=True)
                     self.logger.info(f'Threads count – {threading.active_count()}')

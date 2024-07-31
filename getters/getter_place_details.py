@@ -4,8 +4,8 @@ import time
 import aiohttp
 import pydantic
 
+import logger
 from getters.errors import KudagoResponseError
-from getters.getter_events import _ProtoGetter
 
 
 class PlaceDetails(pydantic.BaseModel):
@@ -19,9 +19,9 @@ asyncio.set_event_loop(loop)
 
 
 # noinspection PyBroadException
-class GetterPlaceDetails(_ProtoGetter):
+class EventPlaceInfoGetter:
     def __init__(self, places_ids: list[int]):
-        super().__init__()
+        self.logger = logger.Logger(name=self.__class__.__name__)
         self.places_ids: list[int] = places_ids
         self._ids_for_retry: list[int] = []
 

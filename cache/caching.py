@@ -23,4 +23,7 @@ class Caching:
     @staticmethod
     @cache.redis_cache()
     def get_scrobble_id(artist: str, album: str, track: str, scrobble_date: datetime.datetime) -> int:
+        """
+        Запрашивает Scrobble из кэша. Если в кэше нет, то смотрим в БД. Если в БД нет, то добавляем и туда, и туда.
+        """
         return db.Scrobbles.add(artist=artist, album=album, track=track, scrobble_date=scrobble_date).id

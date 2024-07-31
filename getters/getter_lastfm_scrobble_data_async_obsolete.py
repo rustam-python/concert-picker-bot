@@ -1,6 +1,5 @@
 import asyncio
 import collections.abc
-import dataclasses
 import datetime
 import time
 
@@ -13,29 +12,13 @@ import schemas
 import sentry
 import settings
 from getters.errors import LastFMResponseError
+from getters._dataclasses import Page, Scrobble
 
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
 
 
-@dataclasses.dataclass
-class Scrobble:
-    album: str
-    album_mbid: str
-    artist: str
-    artist_mbid: str
-    date: datetime.datetime
-    track: str
-    track_mbid: str
-
-
-@dataclasses.dataclass
-class Page:
-    number: int
-    scrobbles: list[Scrobble] = dataclasses.field(default_factory=list)
-
-
-class LastFMScrobbleDataGetter:
+class GetterLastFMScrobbleDataAsyncObsolete:
 
     def __init__(self):
         self._pages_for_retry = []
