@@ -6,7 +6,7 @@ import getters
 import logger
 
 
-class LastFMScrobbleDataThread(threading.Thread):
+class ThreadScrobblesDataGetter(threading.Thread):
     def __init__(self, timeout: int):
         self.logger = logger.Logger(name=self.__class__.__name__)
         self.timeout = timeout
@@ -16,10 +16,13 @@ class LastFMScrobbleDataThread(threading.Thread):
 
         self._is_running.set()
 
-        super(LastFMScrobbleDataThread, self).__init__()
+        super(ThreadScrobblesDataGetter, self).__init__()
 
         self.daemon = False
         self.name = self.__class__.__name__
+
+        # self._getter = getters.GetterScrobbleDataAsync()  # Включает новый асинхронный парсинг.
+        self._getter = getters.GetterScrobbleDataSync() # Включает старый синхронный парсинг.
 
     def run(self) -> None:
         while not self._stop_event.is_set():
@@ -28,8 +31,7 @@ class LastFMScrobbleDataThread(threading.Thread):
                 while (datetime.datetime.now() - start_time).seconds < (self.timeout + 1):
                     time.sleep(2)
                 try:
-                    # getters.LastFMScrobbleDataGetter().get_scrobbles()  # Включает новый асинхронный парсинг.
-                    getters.ConcertsGetter().get_data()  # Включает старый синхронный парсинг артистов и концертов.
+                    self._getter.get_data()
                 except RuntimeError as e:
                     self.logger.warning(e, exc_info=True)
                     self.logger.info(f'Threads count – {threading.active_count()}')

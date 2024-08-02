@@ -5,39 +5,41 @@ import threads
 
 
 class ThreadHolder:
-    _lastfm_data_thread: typing.Optional[threads.LastFMScrobbleDataThread] = None
-    _bot_thread: typing.Optional[threads.BotThread] = None
+    _thread_concerts_data: None | threads.ThreadConcertsDataGetter = None
+    _thread_bot: None | threads.ThreadBot = None
+    _thread_scrobbles_data: None | threads.ThreadScrobblesDataGetter = None
+
 
     @classmethod
     def start_threads(cls) -> None:
         """Stat all necessary threads."""
-        for thread in (cls.get_lastfm_data_thread(), cls.get_bot_thread(), cls.get_scrobble_data_thread):
+        for thread in (cls.get_concerts_data_thread(), cls.get_bot_thread(), cls.get_scrobble_data_thread()):
             thread.join()
 
     @classmethod
     def stop_threads(cls) -> None:
-        for thread in cls._lastfm_data_thread, cls._bot_thread:
+        for thread in cls._thread_scrobbles_data, cls._thread_bot, cls._thread_concerts_data:
             if thread:
                 thread.stop()
                 thread.join()
 
     @classmethod
-    def get_lastfm_data_thread(cls) -> threads.LastFMScrobbleDataThread:
-        if cls._lastfm_data_thread is None:
-            cls._lastfm_data_thread = threads.LastFMScrobbleDataThread(timeout=settings.App.data_getter_timeout)
-            cls._lastfm_data_thread.start()
-        return cls._lastfm_data_thread
+    def get_concerts_data_thread(cls) -> threads.ThreadConcertsDataGetter:
+        if cls._thread_concerts_data is None:
+            cls._thread_concerts_data = threads.ThreadConcertsDataGetter(timeout=settings.App.data_getter_timeout)
+            cls._thread_concerts_data.start()
+        return cls._thread_concerts_data
 
     @classmethod
-    def get_bot_thread(cls) -> threads.BotThread:
-        if cls._bot_thread is None:
-            cls._bot_thread = threads.BotThread(timeout=settings.App.bot_request_timeout)
-            cls._bot_thread.start()
-        return cls._bot_thread
+    def get_bot_thread(cls) -> threads.ThreadBot:
+        if cls._thread_bot is None:
+            cls._thread_bot = threads.ThreadBot(timeout=settings.App.bot_request_timeout)
+            cls._thread_bot.start()
+        return cls._thread_bot
 
     @classmethod
-    def get_scrobble_data_thread(cls) -> threads.BotThread:
-        if cls._bot_thread is None:
-            cls._bot_thread = threads.BotThread(timeout=settings.App.bot_request_timeout)
-            cls._bot_thread.start()
-        return cls._bot_thread
+    def get_scrobble_data_thread(cls) -> threads.ThreadScrobblesDataGetter:
+        if cls._thread_scrobbles_data is None:
+            cls._thread_scrobbles_data = threads.ThreadScrobblesDataGetter(timeout=settings.App.bot_request_timeout)
+            cls._thread_scrobbles_data.start()
+        return cls._thread_scrobbles_data

@@ -62,7 +62,7 @@ class EventPlaceInfoGetter:
         except KudagoResponseError:
             if place_id not in self._ids_for_retry:
                 self._ids_for_retry.append(place_id)
-        except Exception:
+        except Exception as e:
             self.logger.error(f'Failed to get KudaGo data from {url}')
             if place_id not in self._ids_for_retry:
                 self._ids_for_retry.append(place_id)

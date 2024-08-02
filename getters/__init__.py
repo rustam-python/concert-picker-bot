@@ -1,12 +1,12 @@
 __all__ = [
     'ConcertsGetter',
     'EventPlaceInfoGetter',
-    'GetterLastFMScrobbleDataAsync',
-    'GetterLastFMScrobbleDataSync'
+    'GetterScrobbleDataAsync',
+    'GetterScrobbleDataSync'
 ]
 
-from .getter_events import ConcertsGetter
+from .getter_concerts import ConcertsGetter
 from .getter_place_details import EventPlaceInfoGetter
-from .getter_lastfm_scrobble_data_async import GetterLastFMScrobbleDataAsync
-from .getter_lastfm_scrobble_data_sync import GetterLastFMScrobbleDataSync
-from .getter_lastfm_scrobble_data_async_obsolete import GetterLastFMScrobbleDataAsyncObsolete
+from .getter_scrobble_data_async import GetterScrobbleDataAsync
+from .getter_scrobble_data_sync import GetterScrobbleDataSync
+from .getter_scrobble_data_async_obsolete import GetterScrobbleDataAsyncObsolete

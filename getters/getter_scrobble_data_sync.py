@@ -15,7 +15,7 @@ from getters._dataclasses import Page, Scrobble
 from getters.errors import LastFMResponseError
 
 
-class GetterLastFMScrobbleDataSync:
+class GetterScrobbleDataSync:
 
     def __init__(self):
         self._failed_pages = []
@@ -150,4 +150,4 @@ class GetterLastFMScrobbleDataSync:
 
 if __name__ == '__main__':
     db.initialize_data_base(is_local=False)
-    GetterLastFMScrobbleDataSync().get_scrobbles()
+    GetterScrobbleDataSync().get_scrobbles()

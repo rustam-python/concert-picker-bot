@@ -1,10 +1,11 @@
 __all__ = [
-    'BotThread',
-    'LastFMScrobbleDataThread',
-    'ThreadHolder'
-
+    'ThreadBot',
+    'ThreadConcertsDataGetter',
+    'ThreadHolder',
+    'ThreadScrobblesDataGetter',
 ]
 
-from .thread_bot import BotThread
-from .thread_data_getter import LastFMScrobbleDataThread
-from .thread_holder import ThreadHolder
+from .thread_bot import ThreadBot
+from .thread_concerts_data_getter import ThreadConcertsDataGetter
+from .thread_scrobbles_data_getter import ThreadScrobblesDataGetter
+from .thread_holder import ThreadHolder  # TODO: исправить циклический импорт

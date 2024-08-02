@@ -1,7 +1,9 @@
+import asyncio
 import collections.abc
 import datetime
 import time
 
+import aiohttp
 import requests
 
 import cache
@@ -12,8 +14,11 @@ import settings
 from getters.errors import LastFMResponseError
 from getters._dataclasses import Page, Scrobble
 
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 
-class GetterLastFMScrobbleDataAsync:
+
+class GetterScrobbleDataAsyncObsolete:
 
     def __init__(self):
         self._pages_for_retry = []
@@ -40,12 +45,12 @@ class GetterLastFMScrobbleDataAsync:
     def _get_pages(self) -> list[Page]:
         self.logger.info('Getting scrobbles from LastFM...')
         max_page_number = self._get_total_pages_count()
-        results = self._make_requests(range(1, max_page_number + 1))
+        results = loop.run_until_complete(self._make_requests(range(1, max_page_number + 1)))
         if self._pages_for_retry:
             count = 5
             while count > 0:
                 self.logger.info(f'Trying to reload failed pages. {count} tries left.')
-                results += self._make_requests(self._pages_for_retry)
+                results += loop.run_until_complete(self._make_requests(self._pages_for_retry))
                 count -= 1
         if self._pages_for_retry:
             self.logger.error('There are still not get pages!')
@@ -76,31 +81,34 @@ class GetterLastFMScrobbleDataAsync:
             error_msg = f'Response error message: {error_msg}'
         return error_msg
 
-    def _make_requests(self, pages_numbers: collections.abc.Iterable):
-        results = []
-        for page_number in pages_numbers:
-            url = settings.APIs.url_recent_tracks_via_page.format(
-                page=page_number,
-                user=settings.APIs.lastfm_username,
-                api_key=settings.APIs.api_key
-            )
-            try:
-                result = self._get_page_data(url=url, number=page_number)
-                if page_number in self._pages_for_retry:
-                    self._pages_for_retry.remove(page_number)
-                results.append(result)
-            except Exception as e:
-                sentry.capture_exception(e)
-                self.logger.error(f'Failed to get LastFM data from {url}, error: {e}', stack_info=True)
-                if page_number not in self._pages_for_retry:
-                    self._pages_for_retry.append(page_number)
-        return results
+    async def _make_requests(self, pages_numbers: collections.abc.Iterable):
+        # Limit the number of connections to 10.
+        connector = aiohttp.TCPConnector(limit=5)
+        async with aiohttp.ClientSession(connector=connector) as session:
+            tasks = []
+            for page_number in pages_numbers:
+                url = settings.APIs.url_recent_tracks_via_page.format(
+                    page=page_number,
+                    user=settings.APIs.lastfm_username,
+                    api_key=settings.APIs.api_key
+                )
+                try:
+                    tasks.append(self._get_page_data(url=url, number=page_number, session=session))
+                    if page_number in self._pages_for_retry:
+                        self._pages_for_retry.remove(page_number)
+                except Exception as e:
+                    sentry.capture_exception(e)
+                    self.logger.error(f'Failed to get LastFM data from {url}, error: {e}', stack_info=True)
+                    if page_number not in self._pages_for_retry:
+                        self._pages_for_retry.append(page_number)
+            result = await asyncio.gather(*tasks)
+        return result
 
-    def _get_page_data(self, url: str, number: int) -> Page:
+    async def _get_page_data(self, url: str, number: int, session: aiohttp.ClientSession) -> Page:
         """
         This function gets data from single page.
         """
-        data = self._send_request(url=url)
+        data = await self._send_request(url=url, session=session)
         scrobbles = schemas.ScrobbleData(**data)
         page = Page(number)
         for scrobble in scrobbles.recenttracks.tracks:
@@ -119,10 +127,10 @@ class GetterLastFMScrobbleDataAsync:
             )
         return page
 
-    def _send_request(self, url: str):
-        response = requests.get(url)
+    async def _send_request(self, url: str, session: aiohttp.ClientSession):
+        response = await session.request(method="GET", url=url)
         if not response.ok:
-            error = response.json()
+            error = await response.json()
             self.logger.error(f'Error: {error}')
             raise LastFMResponseError(error)
-        return response.json()
+        return await response.json()
